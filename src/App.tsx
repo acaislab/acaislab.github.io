@@ -32,7 +32,7 @@ const APPS = [
     description: 'Diseñada para la universidad, esta app automatiza tus prioridades y calcula cómo llegar a tus metas',
     icon: BookOpen,
     imageUrl: '/enfasisapp-logo.png',
-    url: 'https://javienfasis.netlify.app/',
+    url: 'https://daleenfasis.netlify.app/',
     color: 'from-cyan-500 to-blue-500'
   },
   {
