@@ -23,7 +23,7 @@ const APPS = [
     description: 'Herramienta de creación y reproducción de música en colores',
     icon: Palette,
     imageUrl: '/playcolora-logo.png',
-    url: 'https://playcolora.netlify.app/',
+    url: 'https://playcolora.netlify.app/playcolora',
     color: 'from-pink-500 to-rose-500'
   },
   {
