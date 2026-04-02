@@ -23,7 +23,7 @@ const APPS = [
     description: 'Herramienta de creación y reproducción de música en colores',
     icon: Palette,
     imageUrl: '/playcolora-logo.png',
-    url: '/playcolora',
+    url: 'https://playcolora.netlify.app/playcolora',
     color: 'from-pink-500 to-rose-500'
   },
   {
@@ -32,7 +32,7 @@ const APPS = [
     description: 'Diseñada para la universidad, esta app automatiza tus prioridades y calcula cómo llegar a tus metas',
     icon: BookOpen,
     imageUrl: '/enfasisapp-logo.png',
-    url: '/enfasisapp',
+    url: 'https://javienfasis.netlify.app/',
     color: 'from-cyan-500 to-blue-500'
   },
   {
@@ -41,7 +41,7 @@ const APPS = [
     description: 'Un cuaderno para profes orientado al reconocimiento de valores con respaldo seguro de su información',
     icon: Music,
     imageUrl: '/proadelaida-logo.png',
-    url: '/proadelaida',
+    url: 'https://pro-adelaidapp.vercel.app/',
     color: 'from-violet-500 to-purple-500'
   }
 ];
