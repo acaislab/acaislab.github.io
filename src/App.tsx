@@ -13,7 +13,8 @@ import {
   ExternalLink,
   Code,
   GraduationCap,
-  Sparkles
+  Sparkles,
+  X
 } from 'lucide-react';
 
 const APPS = [
@@ -32,7 +33,7 @@ const APPS = [
     description: 'Diseñada para la universidad, esta app automatiza tus prioridades y calcula cómo llegar a tus metas',
     icon: BookOpen,
     imageUrl: '/enfasisapp-logo.png',
-    url: 'https://daleenfasis.netlify.app/',
+    url: 'https://javienfasis.netlify.app/',
     color: 'from-cyan-500 to-blue-500'
   },
   {
@@ -61,7 +62,11 @@ const FAQS = [
   },
   {
     question: '¿Cómo puedo hacer una pregunta específica o sugerir una mejora?',
-    answer: 'Puedes contactarme directamente a través del correo iarayai@eduhuechuraba.cl estaré feliz de ayudarte!'
+    answer: 'Puedes contactarnos través de nuestro correo contacto@acaislab.com estarémos felices de ayudarte!'
+  },
+  {
+    question: '¿Las apps son para dispositivos móviles o de escritorio?',
+    answer: 'ProAdelaida está diseñada para computador, PlayColora admite ambos dispositivos, pero está optimizada para uso con teclado físico, en cambio ÉnfasisApp está totalmente optimizada para ser usada en dispositivos móviles.'
   }
 ];
 
@@ -238,6 +243,28 @@ function About() {
   );
 }
 
+function Support() {
+  return (
+    <section id="apoyo" className="py-32 px-6">
+      <div className="max-w-3xl mx-auto text-center">
+        <h2 className="text-3xl md:text-5xl font-display font-bold mb-6">Apoya nuestro trabajo</h2>
+        <p className="text-slate-400 font-light text-lg mb-12">
+          Si estas herramientas te han sido útiles, considera apoyarnos para seguir creando y manteniendo Acaïs Lab.
+        </p>
+        <div className="glass-panel rounded-3xl overflow-hidden p-2 bg-white/5">
+          <iframe 
+            id='kofiframe' 
+            src='https://ko-fi.com/acaislab/?hidefeed=true&widget=true&embed=true&preview=true' 
+            style={{ border: 'none', width: '100%', padding: '4px', background: '#f9f9f9', borderRadius: '1.25rem' }} 
+            height='712' 
+            title='acaislab'
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
@@ -289,20 +316,64 @@ function FAQ() {
 }
 
 function Footer() {
+  const [activeModal, setActiveModal] = useState<'privacy' | 'terms' | null>(null);
+
   return (
-    <footer className="py-12 px-6 border-t border-white/10 mt-20">
+    <footer className="py-12 px-6 border-t border-white/10 mt-20 relative">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="text-2xl font-display font-bold tracking-tight flex items-center gap-1 opacity-80">
           Aca<span className="relative">i<span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[#00E5FF] text-lg leading-none">..</span></span>s Lab
         </div>
-        <p className="text-slate-500 text-sm font-light">
-          © {new Date().getFullYear()} Acaïs Lab. Todos los derechos reservados.
+        <p className="text-slate-500 text-sm font-light text-center md:text-left">
+          © {new Date().getFullYear()} Acaïs Lab.{' '}
+          <a href="mailto:contacto@acaislab.com" className="hover:text-white transition-colors underline decoration-white/30 underline-offset-4">
+            Todos los derechos reservados.
+          </a>
         </p>
         <div className="flex gap-6 text-sm text-slate-500">
-          <a href="#" className="hover:text-white transition-colors">Privacidad</a>
-          <a href="#" className="hover:text-white transition-colors">Términos</a>
+          <button onClick={() => setActiveModal('privacy')} className="hover:text-white transition-colors cursor-pointer">Privacidad</button>
+          <button onClick={() => setActiveModal('terms')} className="hover:text-white transition-colors cursor-pointer">Términos</button>
         </div>
       </div>
+
+      <AnimatePresence>
+        {activeModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="glass-panel p-8 rounded-3xl max-w-lg w-full relative"
+            >
+              <button 
+                onClick={() => setActiveModal(null)}
+                className="absolute top-6 right-6 text-slate-400 hover:text-white cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              
+              {activeModal === 'privacy' ? (
+                <>
+                  <h3 className="text-2xl font-display font-bold mb-4">Privacidad</h3>
+                  <p className="text-slate-300 font-light leading-relaxed">
+                    Nuestras aplicaciones no requieren datos sensibles. Todos los datos proporcionados están totalmente seguros, no se venden ni se recopilan con fines comerciales.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h3 className="text-2xl font-display font-bold mb-4">Términos y Condiciones</h3>
+                  <p className="text-slate-300 font-light leading-relaxed">
+                    Las aplicaciones alojadas en Acaïs Lab son propiedad exclusiva de Isaac Araya Inostroza. No está permitido hacer copias, reproducciones ni hacer uso de las imágenes, logos o código fuente.
+                    <br /><br />
+                    Si necesitas algún permiso especial, puedes contactarnos en{' '}
+                    <a href="mailto:contacto@acaislab.com" className="text-[#00E5FF] hover:underline">contacto@acaislab.com</a>.
+                  </p>
+                </>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </footer>
   );
 }
@@ -315,6 +386,7 @@ export default function App() {
         <Hero />
         <AppsShowcase />
         <About />
+        <Support />
         <FAQ />
       </main>
       <Footer />
