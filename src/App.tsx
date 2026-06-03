@@ -24,7 +24,7 @@ const APPS = [
     description: 'Herramienta de creación y reproducción de música en colores',
     icon: Palette,
     imageUrl: '/playcolora-logo.png',
-    url: 'https://acaislab.com/playcolora/',
+    url: '/playcolora',
     color: 'from-pink-500 to-rose-500'
   },
   {
@@ -155,13 +155,16 @@ function AppsShowcase() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {APPS.map((app, index) => (
-            <motion.div
+            <motion.a
               key={app.id}
+              href={app.url}
+              target="_blank"
+              rel="noopener noreferrer"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
-              className="glass-panel rounded-3xl p-8 group hover:bg-white/10 transition-all duration-500 flex flex-col h-full"
+              className="glass-panel rounded-3xl p-8 group hover:bg-white/10 transition-all duration-500 flex flex-col h-full cursor-pointer block"
             >
               {app.imageUrl ? (
                 <div className="w-16 h-16 rounded-2xl mb-8 shadow-lg overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center p-2">
@@ -176,13 +179,12 @@ function AppsShowcase() {
               <p className="text-slate-400 font-light leading-relaxed mb-8 flex-grow">
                 {app.description}
               </p>
-              <a 
-                href={app.url}
-                className="inline-flex items-center gap-2 text-sm font-medium text-white/80 hover:text-white transition-colors mt-auto w-fit"
+              <div 
+                className="inline-flex items-center gap-2 text-sm font-medium text-white/80 group-hover:text-white transition-colors mt-auto w-fit"
               >
                 Abrir aplicación <ExternalLink className="w-4 h-4" />
-              </a>
-            </motion.div>
+              </div>
+            </motion.a>
           ))}
         </div>
       </div>
@@ -330,9 +332,16 @@ function Footer() {
             Todos los derechos reservados.
           </a>
         </p>
-        <div className="flex gap-6 text-sm text-slate-500">
-          <button onClick={() => setActiveModal('privacy')} className="hover:text-white transition-colors cursor-pointer">Privacidad</button>
-          <button onClick={() => setActiveModal('terms')} className="hover:text-white transition-colors cursor-pointer">Términos</button>
+        <div className="flex flex-col md:flex-row gap-6 items-center text-sm text-slate-500">
+          <div className="flex gap-6">
+            <button onClick={() => setActiveModal('privacy')} className="hover:text-white transition-colors cursor-pointer">Privacidad</button>
+            <button onClick={() => setActiveModal('terms')} className="hover:text-white transition-colors cursor-pointer">Términos</button>
+          </div>
+          <div className="flex items-center justify-center bg-white/5 rounded-full px-2 py-1 border border-white/10">
+            <div className="flex items-center justify-center">
+              <img src="https://api.visitorbadge.io/api/visitors?path=acaislab.com&label=Visitas&labelColor=%23050A15&countColor=%2340C1C1&style=flat" alt="Contador de visitas" className="h-6" />
+            </div>
+          </div>
         </div>
       </div>
 
