@@ -14,17 +14,28 @@ import {
   Code,
   GraduationCap,
   Sparkles,
-  X
+  X,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 const APPS = [
+  {
+    id: 'ritmoimpostor',
+    name: 'Ritmo Impostor',
+    description: '¿Puedes descubrir quién falla el silencio? Juega a tu nivel',
+    icon: Music,
+    imageUrl: '/rojo.png',
+    url: 'https://acaislab.com/ritmoimpostor',
+    color: 'from-red-500 to-orange-500'
+  },
   {
     id: 'playcolora',
     name: 'PlayColora',
     description: 'Herramienta de creación y reproducción de música en colores',
     icon: Palette,
     imageUrl: '/playcolora-logo.png',
-    url: '/playcolora',
+    url: 'https://acaislab.com/playcolora/',
     color: 'from-pink-500 to-rose-500'
   },
   {
@@ -50,7 +61,7 @@ const APPS = [
 const FAQS = [
   {
     question: '¿Las aplicaciones son gratuitas?',
-    answer: 'Sí, actualmente todas las herramientas alojadas en Acaïs Lab son de acceso libre para educadores y estudiantes, puedes apoyar estos proyectos en buymeacoffe'
+    answer: 'Sí, actualmente todas las herramientas alojadas en Acaïs Lab son de acceso libre para educadores y estudiantes, puedes apoyar estos proyectos en Ko-Fi'
   },
   {
     question: '¿Necesito crear una cuenta para usar las apps?',
@@ -70,7 +81,29 @@ const FAQS = [
   }
 ];
 
-function Navbar() {
+const HERO_SLIDES = [
+  { id: 'intro', type: 'content' },
+  { id: 'video1', type: 'video', src: '/video.mp4', url: 'https://acaislab.com/playcolora/' },
+  { id: 'img1', type: 'image', src: '/slide1.jpg', url: 'https://pro-adelaidapp.vercel.app/' },
+  { id: 'img2', type: 'image', src: '/slide2.jpg', url: 'https://acaislab.com/ritmoimpostor' },
+  { id: 'img3', type: 'image', src: '/slide3.jpg', url: 'https://acaislab.com/playcolora/' },
+  { id: 'img4', type: 'image', src: '/slide4.jpg', url: 'https://acaislab.com/playcolora/' },
+  { id: 'img5', type: 'image', src: '/slide5.jpg', url: 'https://acaislab.com/ritmoimpostor' },
+  { id: 'img6', type: 'image', src: '/slide6.jpg', url: 'https://www.linkedin.com/in/isaac-araya-inostroza-226577b0/' },
+  { id: 'img7', type: 'image', src: '/slide7.jpg', url: 'https://pro-adelaidapp.vercel.app/' },
+];
+
+function Navbar({ 
+  currentIndex, 
+  setCurrentIndex, 
+  nextSlide, 
+  prevSlide 
+}: { 
+  currentIndex: number;
+  setCurrentIndex: (idx: number) => void;
+  nextSlide: () => void;
+  prevSlide: () => void;
+}) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -83,10 +116,45 @@ function Navbar() {
 
   return (
     <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'glass-panel py-4' : 'bg-transparent py-6'}`}>
-      <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center relative">
         <a href="#" className="text-2xl font-display font-bold tracking-tight flex items-center gap-1">
           Aca<span className="relative">i<span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[#00E5FF] text-lg leading-none drop-shadow-[0_0_8px_rgba(0,229,255,0.8)]">..</span></span>s Lab
         </a>
+
+        {/* Navigation Controls in Navbar */}
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-6 bg-white/5 backdrop-blur-md border border-white/10 px-6 py-2 rounded-full shadow-lg">
+          <button 
+            onClick={prevSlide}
+            className="text-slate-400 hover:text-white transition-colors p-1"
+            aria-label="Anterior pantalla"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          
+          <div className="flex items-center gap-3">
+            {HERO_SLIDES.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`transition-all duration-300 rounded-full ${
+                  index === currentIndex 
+                    ? 'w-6 h-2 bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]' 
+                    : 'w-2 h-2 bg-slate-600 hover:bg-slate-400'
+                }`}
+                aria-label={`Ir a la pantalla ${index + 1}`}
+              />
+            ))}
+          </div>
+
+          <button 
+            onClick={nextSlide}
+            className="text-slate-400 hover:text-white transition-colors p-1"
+            aria-label="Siguiente pantalla"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
           <a href="#inicio" className="hover:text-white transition-colors">Inicio</a>
           <a href="#apps" className="hover:text-white transition-colors">Apps</a>
@@ -98,43 +166,83 @@ function Navbar() {
   );
 }
 
-function Hero() {
+function Hero({ currentIndex }: { currentIndex: number }) {
   return (
-    <section id="inicio" className="min-h-screen flex items-center justify-center pt-20 px-6 relative overflow-hidden">
-      <div className="max-w-5xl mx-auto text-center z-10">
+    <section id="inicio" className="min-h-screen flex items-center justify-center pt-20 px-6 relative overflow-hidden bg-[#050A15]">
+      <AnimatePresence mode="wait">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          key={currentIndex}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 1.05 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute inset-0 w-full h-full flex items-center justify-center"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel text-sm text-slate-300 mb-8">
-            <Sparkles className="w-4 h-4 text-[#00E5FF]" />
-            <span>Estudio de Software Educativo</span>
-          </div>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tighter leading-[1.1] mb-8">
-            Desarrollo de <br className="hidden md:block" />
-            <span className="text-gradient">herramientas educativas</span>
-          </h1>
-          <p className="text-lg md:text-xl text-slate-400 font-light max-w-2xl mx-auto leading-relaxed mb-12">
-            Creando experiencias digitales que transforman el aprendizaje. 
-            Funcionalidad, rendimiento y propósito en cada línea de código.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a 
-              href="#apps"
-              className="px-8 py-4 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-medium hover:shadow-[0_0_30px_-5px_rgba(139,92,246,0.5)] transition-all duration-300 transform hover:-translate-y-1"
-            >
-              Explorar Aplicaciones
-            </a>
-            <a 
-              href="#sobre-mi"
-              className="px-8 py-4 rounded-2xl glass-panel text-white font-medium hover:bg-white/10 transition-all duration-300"
-            >
-              Conocer al creador
-            </a>
-          </div>
+          {HERO_SLIDES[currentIndex].type === 'content' && (
+            <div className="max-w-5xl mx-auto text-center z-10 px-6 mt-16 lg:mt-0">
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tighter leading-[1.1] mb-8 text-slate-50">
+                Desarrollo de <br className="hidden md:block" />
+                <span className="text-gradient">herramientas educativas</span>
+              </h1>
+              <p className="text-lg md:text-xl text-slate-400 font-light max-w-2xl mx-auto leading-relaxed mb-12">
+                Creando experiencias digitales que transforman el aprendizaje. 
+                Funcionalidad, rendimiento y propósito en cada línea de código.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a 
+                  href="#apps"
+                  className="px-8 py-4 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-medium hover:shadow-[0_0_30px_-5px_rgba(139,92,246,0.5)] transition-all duration-300 transform hover:-translate-y-1"
+                >
+                  Explorar Aplicaciones
+                </a>
+                <a 
+                  href="#sobre-mi"
+                  className="px-8 py-4 rounded-2xl glass-panel text-white font-medium hover:bg-white/10 transition-all duration-300"
+                >
+                  Conocer al creador
+                </a>
+              </div>
+            </div>
+          )}
+
+          {HERO_SLIDES[currentIndex].type === 'image' && (
+            <div className="w-full h-full p-4 md:p-12 lg:p-24 pb-32 flex items-center justify-center mt-16 z-0">
+              <a 
+                href={HERO_SLIDES[currentIndex].url || "#"} 
+                target={HERO_SLIDES[currentIndex].url ? "_blank" : "_self"} 
+                rel={HERO_SLIDES[currentIndex].url ? "noopener noreferrer" : ""}
+                className={`w-full h-full flex items-center justify-center ${HERO_SLIDES[currentIndex].url ? 'cursor-pointer' : 'cursor-default'}`}
+              >
+                <img 
+                  src={HERO_SLIDES[currentIndex].src} 
+                  alt="Pantalla de aplicación" 
+                  className="w-full h-full object-contain drop-shadow-[0_0_40px_rgba(0,0,0,0.5)] rounded-2xl"
+                />
+              </a>
+            </div>
+          )}
+
+          {HERO_SLIDES[currentIndex].type === 'video' && (
+            <div className="w-full h-full p-4 md:p-12 lg:p-24 pb-32 flex items-center justify-center mt-16 z-0">
+              <a 
+                href={HERO_SLIDES[currentIndex].url || "#"} 
+                target={HERO_SLIDES[currentIndex].url ? "_blank" : "_self"} 
+                rel={HERO_SLIDES[currentIndex].url ? "noopener noreferrer" : ""}
+                className={`w-full h-full flex items-center justify-center ${HERO_SLIDES[currentIndex].url ? 'cursor-pointer' : 'cursor-default'}`}
+              >
+                <video 
+                  src={HERO_SLIDES[currentIndex].src} 
+                  autoPlay 
+                  muted 
+                  loop 
+                  playsInline
+                  className="w-full h-full object-contain drop-shadow-[0_0_40px_rgba(0,0,0,0.5)] rounded-2xl pointer-events-none"
+                />
+              </a>
+            </div>
+          )}
         </motion.div>
-      </div>
+      </AnimatePresence>
       
       {/* Decorative background elements */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-violet-500/10 rounded-full blur-[120px] -z-10 pointer-events-none" />
@@ -147,9 +255,9 @@ function AppsShowcase() {
     <section id="apps" className="py-32 px-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-16 md:mb-24">
-          <h2 className="text-3xl md:text-5xl font-display font-bold mb-6">El Laboratorio</h2>
+          <h2 className="text-3xl md:text-5xl font-display font-bold mb-6">Prueba Las Apps ¡Son Gratis!</h2>
           <p className="text-slate-400 font-light text-lg max-w-2xl leading-relaxed">
-            Un ecosistema de aplicaciones independientes diseñadas para resolver problemas específicos en el aula y fuera de ella.
+            Te recomendamos PlayColora disponible en versión móvil y sin conexión
           </p>
         </div>
 
@@ -388,11 +496,36 @@ function Footer() {
 }
 
 export default function App() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+  };
+
+  useEffect(() => {
+    const currentSlide = HERO_SLIDES[currentIndex];
+    const duration = currentSlide.type === 'video' ? 30000 : 9000;
+    
+    const timer = setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, duration);
+    return () => clearTimeout(timer);
+  }, [currentIndex]);
+
   return (
     <div className="min-h-screen">
-      <Navbar />
+      <Navbar 
+        currentIndex={currentIndex} 
+        setCurrentIndex={setCurrentIndex} 
+        nextSlide={nextSlide} 
+        prevSlide={prevSlide} 
+      />
       <main>
-        <Hero />
+        <Hero currentIndex={currentIndex} />
         <AppsShowcase />
         <About />
         <Support />
