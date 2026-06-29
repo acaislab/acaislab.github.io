@@ -194,14 +194,13 @@ function Hero({
           className="absolute inset-0 w-full h-full flex items-center justify-center"
         >
           {HERO_SLIDES[currentIndex].type === 'content' && (
-            <div className="max-w-5xl mx-auto text-center z-10 px-6 mt-16 lg:mt-0">
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tighter leading-[1.1] mb-8 text-slate-50">
-                Desarrollo de <br className="hidden md:block" />
-                <span className="text-gradient">herramientas educativas</span>
+            <div className="max-w-7xl mx-auto text-center z-10 px-6 mt-16 lg:mt-0">
+              <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tighter leading-[1.1] mb-8 text-slate-50 max-w-6xl mx-auto whitespace-normal">
+                Desarrollo de herramientas <br className="hidden md:block" />
+                <span className="text-gradient">educativas y musicales</span>
               </h1>
-              <p className="text-lg md:text-xl text-slate-400 font-light max-w-2xl mx-auto leading-relaxed mb-12">
-                Creando experiencias digitales que transforman el aprendizaje. 
-                Funcionalidad, rendimiento y propósito en cada línea de código.
+              <p className="text-xl md:text-2xl text-slate-400 font-light max-w-3xl mx-auto leading-relaxed mb-12">
+                Laboratorio de progressive web apps con sentido
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <a 
