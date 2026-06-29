@@ -93,17 +93,7 @@ const HERO_SLIDES = [
   { id: 'img7', type: 'image', src: '/slide7.jpg', url: 'https://pro-adelaidapp.vercel.app/' },
 ];
 
-function Navbar({ 
-  currentIndex, 
-  setCurrentIndex, 
-  nextSlide, 
-  prevSlide 
-}: { 
-  currentIndex: number;
-  setCurrentIndex: (idx: number) => void;
-  nextSlide: () => void;
-  prevSlide: () => void;
-}) {
+function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -121,40 +111,6 @@ function Navbar({
           Aca<span className="relative">i<span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[#00E5FF] text-lg leading-none drop-shadow-[0_0_8px_rgba(0,229,255,0.8)]">..</span></span>s Lab
         </a>
 
-        {/* Navigation Controls in Navbar */}
-        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-6 bg-white/5 backdrop-blur-md border border-white/10 px-6 py-2 rounded-full shadow-lg">
-          <button 
-            onClick={prevSlide}
-            className="text-slate-400 hover:text-white transition-colors p-1"
-            aria-label="Anterior pantalla"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          
-          <div className="flex items-center gap-3">
-            {HERO_SLIDES.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`transition-all duration-300 rounded-full ${
-                  index === currentIndex 
-                    ? 'w-6 h-2 bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]' 
-                    : 'w-2 h-2 bg-slate-600 hover:bg-slate-400'
-                }`}
-                aria-label={`Ir a la pantalla ${index + 1}`}
-              />
-            ))}
-          </div>
-
-          <button 
-            onClick={nextSlide}
-            className="text-slate-400 hover:text-white transition-colors p-1"
-            aria-label="Siguiente pantalla"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
           <a href="#inicio" className="hover:text-white transition-colors">Inicio</a>
           <a href="#apps" className="hover:text-white transition-colors">Apps</a>
@@ -166,9 +122,68 @@ function Navbar({
   );
 }
 
-function Hero({ currentIndex }: { currentIndex: number }) {
+function Hero({ 
+  currentIndex, 
+  setCurrentIndex,
+  nextSlide,
+  prevSlide,
+  isPinned,
+  setIsPinned
+}: { 
+  currentIndex: number;
+  setCurrentIndex: (idx: number) => void;
+  nextSlide: () => void;
+  prevSlide: () => void;
+  isPinned: boolean;
+  setIsPinned: (pinned: boolean) => void;
+}) {
   return (
     <section id="inicio" className="min-h-screen flex items-center justify-center pt-20 px-6 relative overflow-hidden bg-[#050A15]">
+      
+      {/* Side Navigation Controls */}
+      <button 
+        onClick={() => { prevSlide(); setIsPinned(false); }}
+        className="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 z-20 text-slate-500 hover:text-white transition-all p-2 rounded-full hover:bg-white/10"
+        aria-label="Anterior pantalla"
+      >
+        <ChevronLeft className="w-8 h-8 md:w-12 md:h-12 opacity-30 hover:opacity-100 transition-opacity" />
+      </button>
+
+      <button 
+        onClick={() => { nextSlide(); setIsPinned(false); }}
+        className="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 z-20 text-slate-500 hover:text-white transition-all p-2 rounded-full hover:bg-white/10"
+        aria-label="Siguiente pantalla"
+      >
+        <ChevronRight className="w-8 h-8 md:w-12 md:h-12 opacity-30 hover:opacity-100 transition-opacity" />
+      </button>
+
+      {/* Dots Navigation */}
+      <div className="absolute top-24 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3">
+        {HERO_SLIDES.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => {
+              if (index !== currentIndex) {
+                setCurrentIndex(index);
+                setIsPinned(false);
+              } else {
+                setIsPinned(false);
+              }
+            }}
+            onDoubleClick={() => {
+              setCurrentIndex(index);
+              setIsPinned(true);
+            }}
+            className={`transition-all duration-300 rounded-full ${
+              index === currentIndex 
+                ? (isPinned ? 'w-6 h-2 bg-pink-500 shadow-[0_0_10px_rgba(236,72,153,0.5)]' : 'w-6 h-2 bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]') 
+                : 'w-2 h-2 bg-slate-600 hover:bg-slate-400'
+            }`}
+            aria-label={`Ir a la pantalla ${index + 1}`}
+          />
+        ))}
+      </div>
+
       <AnimatePresence mode="wait">
         <motion.div
           key={currentIndex}
@@ -305,16 +320,18 @@ function About() {
     <section id="sobre-mi" className="py-32 px-6 relative">
       <div className="max-w-7xl mx-auto">
         <div className="glass-panel rounded-[3rem] p-8 md:p-16 overflow-hidden relative">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
-            <div>
-              <h2 className="text-3xl md:text-5xl font-display font-bold mb-8">Isaac Araya Inostroza</h2>
-              <div className="space-y-6 text-slate-300 font-light leading-relaxed text-lg">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center relative z-10">
+            <div className="lg:col-span-8 xl:col-span-8">
+              <h2 className="text-[2.25rem] sm:text-5xl lg:text-[3rem] xl:text-[3.5rem] font-display font-bold mb-8 tracking-tight whitespace-normal lg:whitespace-nowrap">Bienvenid꩜ al laboratorio 👨🏻‍💻♬♪</h2>
+              <div className="space-y-6 text-slate-300 font-light leading-relaxed text-[26px]">
                 <p>
-                  Profesor, músico y desarrollador de software. Mi objetivo es tender un puente entre la pedagogía tradicional y las posibilidades infinitas de la tecnología.
+                  Soy Isaac Araya, profesor de música especialista en educación emocional y neurociencias aplicadas, desarrollador de estas apps con agentes de IA. 
+                  Creé AcaïsLab para resolver problemáticas surgidas en el contexto educativo ingeniando herramientas prácticas, entretenidas y gratuitas. Estas apps hacen mejor mi vida cotidiana ¡Espero que las disfrutes!
                 </p>
-                <p>
-                  Acaïs Lab nace de la necesidad de crear herramientas prácticas, con una mirada distinta, que realmente entiendan el contexto educativo y las necesidades tanto de docentes como de estudiantes.
-                </p>
+              </div>
+
+              <div className="mt-6 p-4 rounded-2xl bg-slate-800/30 border border-slate-700/50 text-sm text-slate-400 italic max-w-2xl">
+                Aprovecho de agradecer a la persona que me nominó al Global Teacher Prize, aún no sé quién eres, pero quiero que sepas que completé la postulación 🤗
               </div>
               
               <div className="flex flex-wrap gap-4 mt-10">
@@ -333,15 +350,14 @@ function About() {
               </div>
             </div>
             
-            <div className="relative h-full min-h-[400px] rounded-3xl overflow-hidden glass-panel border-white/20 flex items-center justify-center">
-              {/* Abstract representation instead of a real photo for now */}
-              <div className="absolute inset-0 bg-gradient-to-br from-violet-900/40 to-cyan-900/40 mix-blend-overlay" />
-              <div className="text-center p-8">
-                <div className="w-24 h-24 mx-auto border border-white/20 rounded-full flex items-center justify-center mb-6 bg-white/5">
-                  <span className="text-3xl font-display font-bold">IA</span>
-                </div>
-                <p className="text-sm tracking-widest uppercase text-slate-400 font-medium">Fundador & Desarrollador</p>
-              </div>
+            <div className="flex items-center justify-center lg:justify-end lg:col-span-4 xl:col-span-4">
+              <a href="https://www.linkedin.com/in/isaac-araya-inostroza-226577b0" target="_blank" rel="noopener noreferrer">
+                <img 
+                  src="/retrato.png" 
+                  alt="Isaac Araya" 
+                  className="w-[300px] h-[300px] md:w-[360px] md:h-[360px] lg:w-[400px] lg:h-[400px] object-cover rounded-full border-4 border-white/10 shadow-[0_0_40px_rgba(255,255,255,0.05)] transition-transform duration-500 hover:scale-105"
+                />
+              </a>
             </div>
           </div>
           
@@ -357,9 +373,9 @@ function Support() {
   return (
     <section id="apoyo" className="py-32 px-6">
       <div className="max-w-3xl mx-auto text-center">
-        <h2 className="text-3xl md:text-5xl font-display font-bold mb-6">Apoya nuestro trabajo</h2>
+        <h2 className="text-3xl md:text-5xl font-display font-bold mb-6">Si sientes gratitud puedes regalarme un café ☕️</h2>
         <p className="text-slate-400 font-light text-lg mb-12">
-          Si estas herramientas te han sido útiles, considera apoyarnos para seguir creando y manteniendo Acaïs Lab.
+          Aquí puedes donar un café a mi trabajo de manera segura mediante Ko-fi
         </p>
         <div className="glass-panel rounded-3xl overflow-hidden p-2 bg-white/5">
           <iframe 
@@ -497,6 +513,7 @@ function Footer() {
 
 export default function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPinned, setIsPinned] = useState(false);
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length);
@@ -507,6 +524,8 @@ export default function App() {
   };
 
   useEffect(() => {
+    if (isPinned) return;
+
     const currentSlide = HERO_SLIDES[currentIndex];
     const duration = currentSlide.type === 'video' ? 30000 : 9000;
     
@@ -514,18 +533,20 @@ export default function App() {
       setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length);
     }, duration);
     return () => clearTimeout(timer);
-  }, [currentIndex]);
+  }, [currentIndex, isPinned]);
 
   return (
     <div className="min-h-screen">
-      <Navbar 
-        currentIndex={currentIndex} 
-        setCurrentIndex={setCurrentIndex} 
-        nextSlide={nextSlide} 
-        prevSlide={prevSlide} 
-      />
+      <Navbar />
       <main>
-        <Hero currentIndex={currentIndex} />
+        <Hero 
+          currentIndex={currentIndex} 
+          setCurrentIndex={setCurrentIndex}
+          nextSlide={nextSlide}
+          prevSlide={prevSlide}
+          isPinned={isPinned}
+          setIsPinned={setIsPinned}
+        />
         <AppsShowcase />
         <About />
         <Support />
