@@ -21,6 +21,15 @@ import {
 
 const APPS = [
   {
+    id: 'karekau',
+    name: 'Karekau',
+    description: 'Un juego de cartas donde las emociones lo son todo',
+    icon: Sparkles,
+    imageUrl: '/karekau.png',
+    url: 'https://acaislab.com/karekau',
+    color: 'from-amber-500 to-orange-600'
+  },
+  {
     id: 'ritmoimpostor',
     name: 'Ritmo Impostor',
     description: '¿Puedes descubrir quién falla el silencio? Juega a tu nivel',
@@ -91,6 +100,7 @@ const HERO_SLIDES = [
   { id: 'img5', type: 'image', src: '/slide5.jpg', url: 'https://acaislab.com/ritmoimpostor' },
   { id: 'img6', type: 'image', src: '/slide6.jpg', url: 'https://www.linkedin.com/in/isaac-araya-inostroza-226577b0/' },
   { id: 'img7', type: 'image', src: '/slide7.jpg', url: 'https://pro-adelaidapp.vercel.app/' },
+  { id: 'img8', type: 'image', src: '/slide8.png', url: 'https://acaislab.com/karekau' },
 ];
 
 function Navbar() {
