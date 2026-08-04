@@ -18,6 +18,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
+import { SurveyPage } from './components/SurveyPage';
 
 const APPS = [
   {
@@ -523,6 +524,19 @@ function Footer() {
 export default function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPinned, setIsPinned] = useState(false);
+  const [isSurveyPage, setIsSurveyPage] = useState(window.location.pathname === '/encuesta');
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setIsSurveyPage(window.location.pathname === '/encuesta');
+    };
+    window.addEventListener('popstate', handleLocationChange);
+    return () => window.removeEventListener('popstate', handleLocationChange);
+  }, []);
+
+  if (isSurveyPage) {
+    return <SurveyPage />;
+  }
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length);
