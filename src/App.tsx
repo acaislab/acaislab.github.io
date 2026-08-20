@@ -16,7 +16,8 @@ import {
   Sparkles,
   X,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Instagram
 } from 'lucide-react';
 import { SurveyPage } from './components/SurveyPage';
 
@@ -224,7 +225,7 @@ function Hero({
                   href="#sobre-mi"
                   className="px-8 py-4 rounded-2xl glass-panel text-white font-medium hover:bg-white/10 transition-all duration-300"
                 >
-                  Conocer al creador
+                  Sobre Mí
                 </a>
               </div>
             </div>
@@ -340,9 +341,9 @@ function About() {
                 </p>
               </div>
 
-              <div className="mt-6 p-4 rounded-2xl bg-slate-800/30 border border-slate-700/50 text-sm text-slate-400 italic max-w-2xl">
-                Aprovecho de agradecer a la persona que me nominó al Global Teacher Prize, aún no sé quién eres, pero quiero que sepas que completé la postulación 🤗
-              </div>
+              <a href="https://www.instagram.com/acaislab/" target="_blank" rel="noopener noreferrer" className="block mt-6 p-4 rounded-2xl bg-slate-800/30 border border-pink-500/30 hover:border-pink-500/50 hover:bg-slate-800/50 text-sm text-slate-300 italic max-w-2xl transition-colors cursor-pointer group">
+                ¡Ahora acaislab tiene instagram! <span className="text-pink-400 group-hover:text-pink-300 font-medium">Siguenos aquí</span>
+              </a>
               
               <div className="flex flex-wrap gap-4 mt-10">
                 <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm">
@@ -576,6 +577,17 @@ export default function App() {
         <FAQ />
       </main>
       <Footer />
+      
+      {/* Instagram Banner */}
+      <a 
+        href="https://www.instagram.com/acaislab/" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="fixed bottom-6 left-6 z-50 flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full shadow-[0_8px_30px_rgb(236,72,153,0.3)] hover:shadow-[0_8px_40px_rgb(236,72,153,0.5)] hover:-translate-y-1 transition-all duration-300"
+      >
+        <Instagram className="w-5 h-5" />
+        <span className="font-medium text-sm hidden sm:inline">¡Novedad! Ahora me puedes seguir en instagram</span>
+      </a>
     </div>
   );
 }
