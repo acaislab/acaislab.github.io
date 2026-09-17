@@ -17,11 +17,30 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  Instagram
+  Instagram,
+  Smartphone
 } from 'lucide-react';
 import { SurveyPage } from './components/SurveyPage';
 
 const APPS = [
+  {
+    id: 'notpalito',
+    name: 'Not Palito',
+    description: 'Sortea quién será fácilmente y con memoria',
+    icon: Sparkles,
+    imageUrl: '/notpalito.png',
+    url: 'https://acaislab.com/notpalito',
+    color: 'from-emerald-500 to-teal-600'
+  },
+  {
+    id: 'karekaumovil',
+    name: 'Karekau Móvil',
+    description: 'Especialmente diseñada para celulares ¡Ya no tienes excusas para no jugar!',
+    icon: Sparkles,
+    imageUrl: '/karekaumovil.png',
+    url: 'https://acaislab.com/karekaumovil',
+    color: 'from-orange-500 to-red-600'
+  },
   {
     id: 'karekau',
     name: 'Karekau',
@@ -96,7 +115,7 @@ const HERO_SLIDES = [
   { id: 'intro', type: 'content' },
   { id: 'video1', type: 'video', src: '/video.mp4', url: 'https://acaislab.com/playcolora/' },
   { id: 'img1', type: 'image', src: '/slide1.jpg', url: 'https://pro-adelaidapp.vercel.app/' },
-  { id: 'img2', type: 'image', src: '/slide2.jpg', url: 'https://acaislab.com/ritmoimpostor' },
+  { id: 'img2', type: 'image', src: '/slide2.jpg', url: 'https://acaislab.com/karekaumovil' },
   { id: 'img3', type: 'image', src: '/slide3.jpg', url: 'https://acaislab.com/playcolora/' },
   { id: 'img4', type: 'image', src: '/slide4.jpg', url: 'https://acaislab.com/playcolora/' },
   { id: 'img5', type: 'image', src: '/slide5.jpg', url: 'https://acaislab.com/ritmoimpostor' },
@@ -578,15 +597,15 @@ export default function App() {
       </main>
       <Footer />
       
-      {/* Instagram Banner */}
+      {/* Novedad Banner */}
       <a 
-        href="https://www.instagram.com/acaislab/" 
+        href="https://acaislab.com/karekaumovil" 
         target="_blank" 
         rel="noopener noreferrer"
-        className="fixed bottom-6 left-6 z-50 flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full shadow-[0_8px_30px_rgb(236,72,153,0.3)] hover:shadow-[0_8px_40px_rgb(236,72,153,0.5)] hover:-translate-y-1 transition-all duration-300"
+        className="fixed bottom-6 left-6 z-50 flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-full shadow-[0_8px_30px_rgb(239,68,68,0.3)] hover:shadow-[0_8px_40px_rgb(239,68,68,0.5)] hover:-translate-y-1 transition-all duration-300"
       >
-        <Instagram className="w-5 h-5" />
-        <span className="font-medium text-sm hidden sm:inline">¡Novedad! Ahora me puedes seguir en instagram</span>
+        <Smartphone className="w-5 h-5" />
+        <span className="font-medium text-sm hidden sm:inline">Karekau para el celu ¡Ya disponible!</span>
       </a>
     </div>
   );
