@@ -28,7 +28,7 @@ const APPS = [
     name: 'Repaso Conceptual',
     description: 'Un memorice para conectar los conceptos musicales de la prueba semestral con sus definiciones',
     icon: Music,
-    imageUrl: '/repasomemorice-favicon.png',
+    imageUrl: '/repasomemorice/repasomemorice-favicon.png',
     url: 'https://acaislab.com/repasomemorice',
     color: 'from-violet-600 to-indigo-600'
   },
@@ -306,6 +306,53 @@ function Hero({
   );
 }
 
+function AppCardImage({ app }: { app: typeof APPS[0] }) {
+  const [currentSrc, setCurrentSrc] = useState(app.imageUrl);
+  const [hasError, setHasError] = useState(false);
+
+  const handleError = () => {
+    if (app.id === 'repasomemorice') {
+      if (currentSrc === '/repasomemorice/repasomemorice-favicon.png') {
+        setCurrentSrc('/repasomemorice/favicon.png');
+        return;
+      }
+      if (currentSrc === '/repasomemorice/favicon.png') {
+        setCurrentSrc('/repasomemorice-favicon.png');
+        return;
+      }
+      if (currentSrc === '/repasomemorice-favicon.png') {
+        setCurrentSrc('/favicon.png');
+        return;
+      }
+    }
+    setHasError(true);
+  };
+
+  if (currentSrc && !hasError) {
+    return (
+      <div className="w-16 h-16 rounded-2xl mb-8 shadow-lg overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center p-2">
+        <img 
+          src={currentSrc} 
+          alt={`${app.name} logo`} 
+          loading="lazy" 
+          decoding="async" 
+          width={64} 
+          height={64} 
+          className="w-full h-full object-contain drop-shadow-md rounded-xl" 
+          referrerPolicy="no-referrer" 
+          onError={handleError}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${app.color} flex items-center justify-center mb-8 shadow-lg`}>
+      <app.icon className="w-7 h-7 text-white" />
+    </div>
+  );
+}
+
 function AppsShowcase() {
   return (
     <section id="apps" className="py-32 px-6">
@@ -330,24 +377,7 @@ function AppsShowcase() {
               transition={{ delay: index * 0.1, duration: 0.5 }}
               className="glass-panel rounded-3xl p-8 group hover:bg-white/10 transition-all duration-500 flex flex-col h-full cursor-pointer block"
             >
-              {app.imageUrl ? (
-                <div className="w-16 h-16 rounded-2xl mb-8 shadow-lg overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center p-2">
-                  <img 
-                    src={app.imageUrl} 
-                    alt={`${app.name} logo`} 
-                    loading="lazy" 
-                    decoding="async" 
-                    width={64} 
-                    height={64} 
-                    className="w-full h-full object-contain drop-shadow-md" 
-                    referrerPolicy="no-referrer" 
-                  />
-                </div>
-              ) : (
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${app.color} flex items-center justify-center mb-8 shadow-lg`}>
-                  <app.icon className="w-7 h-7 text-white" />
-                </div>
-              )}
+              <AppCardImage app={app} />
               <h3 className="text-2xl font-display font-semibold mb-4 group-hover:text-[#00E5FF] transition-colors">{app.name}</h3>
               <p className="text-slate-400 font-light leading-relaxed mb-8 flex-grow">
                 {app.description}
