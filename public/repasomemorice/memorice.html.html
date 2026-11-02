@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memorice Musical Interactivo</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a, #2e1065, #1e1b4b);
+            min-height: 100vh;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            background: rgba(99, 102, 241, 0.2);
+            color: #a5b4fc;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, #f472b6, #c084fc, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        p.desc {
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* Panel de Estadísticas */
+        .stats-panel {
+            display: flex;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            margin-bottom: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: #c7d2fe;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        #score { color: #34d399; }
+        #moves { color: #fbbf24; }
+        #timer { color: #22d3ee; }
+
+        .btn-restart {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.85rem;
+        }
+
+        .btn-restart:hover {
+            background: #4338ca;
+        }
+
+        /* Tablero */
+        main {
+            width: 100%;
+            max-width: 850px;
+        }
+
+        .grid-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            width: 100%;
+        }
+
+        /* Estilos de las tarjetas */
+        .card {
+            height: 130px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #4338ca, #6b21a8);
+        }
+
+        .card-front:hover {
+            border-color: #f472b6;
+        }
+
+        .card-back {
+            background: #1e293b;
+            transform: rotateY(180deg);
+            border: 2px solid #a855f7;
+        }
+
+        .card-type {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #f472b6;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .card-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #f1f5f9;
+            line-height: 1.2;
+        }
+
+        .card.matched .card-inner {
+            box-shadow: 0 0 15px #34d399;
+        }
+
+        .card.matched .card-back {
+            border-color: #34d399;
+            background: #0f172a;
+        }
+
+        /* Modales */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: #1e293b;
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            border-radius: 20px;
+            max-width: 400px;
+            width: 100%;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-title {
+            color: #f472b6;
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+        }
+
+        .modal-desc {
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
+        .btn-modal {
+            background: linear-gradient(90deg, #9333ea, #4f46e5);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <span class="tag">Guía Interactiva Educativa</span>
+        <h1>Memorice Musical 🎶</h1>
+        <p class="desc">Conecta cada <strong>Concepto Musical</strong> con su respectiva <strong>Definición</strong> para completar la guía.</p>
+    </header>
+
+    <div class="stats-panel">
+        <div class="stat-item">Parejas: <span id="score" class="stat-value">0 / 7</span></div>
+        <div class="stat-item">Intentos: <span id="moves" class="stat-value">0</span></div>
+        <div class="stat-item">Tiempo: <span id="timer" class="stat-value">00:00</span></div>
+        <button onclick="restartGame()" class="btn-restart">🔄 Reiniciar</button>
+    </div>
+
+    <main>
+        <div id="game-board" class="grid-board"></div>
+    </main>
+
+    <!-- Modal Educativo al hacer Match -->
+    <div id="info-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div id="modal-icon" class="modal-icon">🎵</div>
+            <h3 id="modal-title" class="modal-title">¡Concepto Descubierto!</h3>
+            <p id="modal-text" class="modal-desc"></p>
+            <button onclick="closeModal()" class="btn-modal">Continuar Jugando</button>
+        </div>
+    </div>
+
+    <!-- Pantalla de Victoria -->
+    <div id="win-screen" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-icon">🏆</div>
+            <h2 class="modal-title" style="color: #34d399;">¡Felicitaciones!</h2>
+            <p class="modal-desc">Has completado con éxito todos los conceptos musicales.</p>
+            <button onclick="restartGame()" class="btn-modal" style="background: #059669;">Jugar de Nuevo</button>
+        </div>
+    </div>
+
+    <footer>Guía Interactiva de Educación Musical</footer>
+
+    <script>
+        const musicalData = [
+            { id: 1, concept: "Melodía", definition: "Notas una a la vez", icon: "🎼", explanation: "Sucesión coherente de notas que se escuchan una tras otra." },
+            { id: 2, concept: "Armonía", definition: "Varias notas simultáneas", icon: "🎹", explanation: "Combinación de dos o más notas que suenan al mismo tiempo (acordes)." },
+            { id: 3, concept: "Ritmo", definition: "Sonidos y silencios ordenados", icon: "🥁", explanation: "Organización de los sonidos y pausas en el tiempo." },
+            { id: 4, concept: "Pulso", definition: "Velocidad de la música", icon: "💓", explanation: "Latido constante y regular que determina el compás." },
+            { id: 5, concept: "Estructura", definition: "Partes de una obra musical", icon: "🧩", explanation: "Organización de las secciones de una canción (verso, coro, etc.)." },
+            { id: 6, concept: "Interpretación", definition: "Actitud y emoción asociada", icon: "🎸", explanation: "Expresión y matices que transmite el músico al ejecutar la obra." },
+            { id: 7, concept: "BPM", definition: "Beats por minuto para medir el pulso", icon: "⏱️", explanation: "Unidad de medida del tempo o velocidad musical." }
+        ];
+
+        let cards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let moves = 0;
+        let timer = 0;
+        let timerInterval = null;
+        let isProcessing = false;
+        let gameStarted = false;
+
+        const board = document.getElementById('game-board');
+        const scoreDisplay = document.getElementById('score');
+        const movesDisplay = document.getElementById('moves');
+        const timerDisplay = document.getElementById('timer');
+        const infoModal = document.getElementById('info-modal');
+        const winScreen = document.getElementById('win-screen');
+
+        function initGame() {
+            cards = [];
+            musicalData.forEach(item => {
+                cards.push({ id: item.id, type: 'Concepto', text: item.concept, icon: item.icon, explanation: item.explanation });
+                cards.push({ id: item.id, type: 'Definición', text: item.definition, icon: item.icon, explanation: item.explanation });
+            });
+
+            // Mezclar tarjetas
+            cards.sort(() => Math.random() - 0.5);
+
+            board.innerHTML = '';
+            flippedCards = [];
+            matchedPairs = 0;
+            moves = 0;
+            timer = 0;
+            isProcessing = false;
+            gameStarted = false;
+            
+            clearInterval(timerInterval);
+            timerDisplay.textContent = "00:00";
+            scoreDisplay.textContent = `0 / ${musicalData.length}`;
+            movesDisplay.textContent = "0";
+            winScreen.classList.remove('active');
+
+            // Renderizar tarjetas
+            cards.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'card';
+                cardElement.dataset.id = card.id;
+
+                cardElement.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-face card-front">
+                            <span style="font-size: 2rem;">🎵</span>
+                        </div>
+                        <div class="card-face card-back">
+                            <span style="font-size: 1.5rem; margin-bottom: 4px;">${card.icon}</span>
+                            <span class="card-type">${card.type}</span>
+                            <span class="card-text">${card.text}</span>
+                        </div>
+                    </div>
+                `;
+
+                cardElement.addEventListener('click', () => flipCard(cardElement, card));
+                board.appendChild(cardElement);
+            });
+        }
+
+        function startTimer() {
+            if (!gameStarted) {
+                gameStarted = true;
+                timerInterval = setInterval(() => {
+                    timer++;
+                    let mins = Math.floor(timer / 60).toString().padStart(2, '0');
+                    let secs = (timer % 60).toString().padStart(2, '0');
+                    timerDisplay.textContent = `${mins}:${secs}`;
+                }, 1000);
+            }
+        }
+
+        function flipCard(cardElement, cardData) {
+            if (isProcessing) return;
+            if (cardElement.classList.contains('matched')) return;
+            if (cardElement.classList.contains('flipped')) return;
+
+            startTimer();
+
+            cardElement.classList.add('flipped');
+            flippedCards.push({ element: cardElement, data: cardData });
+
+            if (flippedCards.length === 2) {
+                moves++;
+                movesDisplay.textContent = moves;
+                isProcessing = true;
+
+                const [card1, card2] = flippedCards;
+
+                if (card1.data.id === card2.data.id && card1.data.type !== card2.data.type) {
+                    setTimeout(() => {
+                        card1.element.classList.add('matched');
+                        card2.element.classList.add('matched');
+
+                        matchedPairs++;
+                        scoreDisplay.textContent = `${matchedPairs} / ${musicalData.length}`;
+
+                        showEducationalModal(card1.data);
+
+                        flippedCards = [];
+                        isProcessing = false;
+
+                        if (matchedPairs === musicalData.length) {
+                            clearInterval(timerInterval);
+                            setTimeout(() => winScreen.classList.add('active'), 1000);
+                        }
+                    }, 400);
+                } else {
+                    setTimeout(() => {
+                        card1.element.classList.remove('flipped');
+                        card2.element.classList.remove('flipped');
+                        flippedCards = [];
+                        isProcessing = false;
+                    }, 900);
+                }
+            }
+        }
+
+        function showEducationalModal(data) {
+            document.getElementById('modal-icon').textContent = data.icon;
+            document.getElementById('modal-title').textContent = data.text;
+            document.getElementById('modal-text').textContent = data.explanation;
+            infoModal.classList.add('active');
+        }
+
+        function closeModal() {
+            infoModal.classList.remove('active');
+        }
+
+        function restartGame() {
+            closeModal();
+            initGame();
+        }
+
+        // Inicializar al cargar
+        window.onload = initGame;
+    </script>
+</body>
+</html>

@@ -7,18 +7,28 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://storage.ko-fi.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
   </head>
   <body class="bg-[#050A15] text-slate-50 font-sans antialiased selection:bg-violet-500/30">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
     <script>
-      kofiWidgetOverlay.draw('acaislab', {
-        'type': 'floating-chat',
-        'floating-chat.donateButton.text': 'Tip Us',
-        'floating-chat.donateButton.background-color': '#00b9fe',
-        'floating-chat.donateButton.text-color': '#fff'
+      window.addEventListener('load', function() {
+        var script = document.createElement('script');
+        script.src = 'https://storage.ko-fi.com/cdn/scripts/overlay-widget.js';
+        script.async = true;
+        script.onload = function() {
+          if (window.kofiWidgetOverlay) {
+            window.kofiWidgetOverlay.draw('acaislab', {
+              'type': 'floating-chat',
+              'floating-chat.donateButton.text': 'Tip Us',
+              'floating-chat.donateButton.background-color': '#00b9fe',
+              'floating-chat.donateButton.text-color': '#fff'
+            });
+          }
+        };
+        document.body.appendChild(script);
       });
     </script>
   </body>

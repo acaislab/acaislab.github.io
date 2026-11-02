@@ -24,6 +24,15 @@ import { SurveyPage } from './components/SurveyPage';
 
 const APPS = [
   {
+    id: 'repasomemorice',
+    name: 'Repaso Conceptual',
+    description: 'Un memorice para conectar los conceptos musicales de la prueba semestral con sus definiciones',
+    icon: Music,
+    imageUrl: '/repasomemorice-favicon.png',
+    url: 'https://acaislab.com/repasomemorice',
+    color: 'from-violet-600 to-indigo-600'
+  },
+  {
     id: 'notpalito',
     name: 'Not Palito',
     description: 'Sortea quién será fácilmente y con memoria',
@@ -118,7 +127,7 @@ const HERO_SLIDES = [
   { id: 'img2', type: 'image', src: '/slide2.jpg', url: 'https://acaislab.com/karekaumovil' },
   { id: 'img3', type: 'image', src: '/slide3.jpg', url: 'https://acaislab.com/playcolora/' },
   { id: 'img4', type: 'image', src: '/slide4.jpg', url: 'https://acaislab.com/playcolora/' },
-  { id: 'img5', type: 'image', src: '/slide5.jpg', url: 'https://acaislab.com/ritmoimpostor' },
+  { id: 'img5', type: 'image', src: '/slide5.jpg', url: 'https://acaislab.com/repasomemorice' },
   { id: 'img6', type: 'image', src: '/slide6.jpg', url: 'https://www.linkedin.com/in/isaac-araya-inostroza-226577b0/' },
   { id: 'img7', type: 'image', src: '/slide7.jpg', url: 'https://pro-adelaidapp.vercel.app/' },
   { id: 'img8', type: 'image', src: '/slide8.png', url: 'https://acaislab.com/karekau' },
@@ -261,6 +270,7 @@ function Hero({
                 <img 
                   src={HERO_SLIDES[currentIndex].src} 
                   alt="Pantalla de aplicación" 
+                  decoding="async"
                   className="w-full h-full object-contain drop-shadow-[0_0_40px_rgba(0,0,0,0.5)] rounded-2xl"
                 />
               </a>
@@ -281,6 +291,7 @@ function Hero({
                   muted 
                   loop 
                   playsInline
+                  preload="metadata"
                   className="w-full h-full object-contain drop-shadow-[0_0_40px_rgba(0,0,0,0.5)] rounded-2xl pointer-events-none"
                 />
               </a>
@@ -321,7 +332,16 @@ function AppsShowcase() {
             >
               {app.imageUrl ? (
                 <div className="w-16 h-16 rounded-2xl mb-8 shadow-lg overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center p-2">
-                  <img src={app.imageUrl} alt={`${app.name} logo`} className="w-full h-full object-contain drop-shadow-md" referrerPolicy="no-referrer" />
+                  <img 
+                    src={app.imageUrl} 
+                    alt={`${app.name} logo`} 
+                    loading="lazy" 
+                    decoding="async" 
+                    width={64} 
+                    height={64} 
+                    className="w-full h-full object-contain drop-shadow-md" 
+                    referrerPolicy="no-referrer" 
+                  />
                 </div>
               ) : (
                 <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${app.color} flex items-center justify-center mb-8 shadow-lg`}>
@@ -360,8 +380,25 @@ function About() {
                 </p>
               </div>
 
-              <a href="https://www.instagram.com/acaislab/" target="_blank" rel="noopener noreferrer" className="block mt-6 p-4 rounded-2xl bg-slate-800/30 border border-pink-500/30 hover:border-pink-500/50 hover:bg-slate-800/50 text-sm text-slate-300 italic max-w-2xl transition-colors cursor-pointer group">
-                ¡Ahora acaislab tiene instagram! <span className="text-pink-400 group-hover:text-pink-300 font-medium">Siguenos aquí</span>
+              <a 
+                href="https://www.instagram.com/acaislab/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="group relative block mt-8 p-5 md:p-6 rounded-2xl bg-gradient-to-r from-pink-500/15 via-purple-500/15 to-amber-500/10 border-2 border-pink-500/40 hover:border-pink-500/80 hover:bg-slate-800/60 shadow-lg shadow-pink-500/10 hover:shadow-pink-500/25 transition-all duration-300 cursor-pointer max-w-2xl"
+              >
+                <div className="flex items-start sm:items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-600 flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 transition-transform">
+                    <Instagram className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-grow">
+                    <p className="text-base sm:text-lg md:text-xl font-medium text-slate-100 leading-snug group-hover:text-white transition-colors">
+                      Fui nominado al Global Teacher Prize Chile 2026 y quedé en el top 9 profes de música chile ¡Sigueme en instagram para no perderte nada!
+                    </p>
+                    <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-pink-400 group-hover:text-pink-300 mt-2">
+                      Seguir en Instagram <ExternalLink className="w-4 h-4 ml-0.5" />
+                    </span>
+                  </div>
+                </div>
               </a>
               
               <div className="flex flex-wrap gap-4 mt-10">
@@ -385,6 +422,10 @@ function About() {
                 <img 
                   src="/retrato.png" 
                   alt="Isaac Araya" 
+                  loading="lazy"
+                  decoding="async"
+                  width={400}
+                  height={400}
                   className="w-[300px] h-[300px] md:w-[360px] md:h-[360px] lg:w-[400px] lg:h-[400px] object-cover rounded-full border-4 border-white/10 shadow-[0_0_40px_rgba(255,255,255,0.05)] transition-transform duration-500 hover:scale-105"
                 />
               </a>
@@ -414,6 +455,7 @@ function Support() {
             style={{ border: 'none', width: '100%', padding: '4px', background: '#f9f9f9', borderRadius: '1.25rem' }} 
             height='712' 
             title='acaislab'
+            loading="lazy"
           />
         </div>
       </div>
@@ -545,10 +587,22 @@ export default function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPinned, setIsPinned] = useState(false);
   const [isSurveyPage, setIsSurveyPage] = useState(window.location.pathname === '/encuesta');
+  const [isMemoricePage, setIsMemoricePage] = useState(
+    window.location.pathname === '/repasomemorice' || 
+    window.location.pathname === '/repasomemorice/' ||
+    window.location.pathname === '/memorice' ||
+    window.location.pathname === '/memorice.html'
+  );
 
   useEffect(() => {
     const handleLocationChange = () => {
       setIsSurveyPage(window.location.pathname === '/encuesta');
+      setIsMemoricePage(
+        window.location.pathname === '/repasomemorice' || 
+        window.location.pathname === '/repasomemorice/' ||
+        window.location.pathname === '/memorice' ||
+        window.location.pathname === '/memorice.html'
+      );
     };
     window.addEventListener('popstate', handleLocationChange);
     return () => window.removeEventListener('popstate', handleLocationChange);
@@ -556,6 +610,16 @@ export default function App() {
 
   if (isSurveyPage) {
     return <SurveyPage />;
+  }
+
+  if (isMemoricePage) {
+    return (
+      <iframe 
+        src="/repasomemorice/index.html" 
+        title="Repaso Conceptual - Memorice Musical"
+        className="w-full h-screen border-0 fixed inset-0 z-50 bg-[#0f172a]"
+      />
+    );
   }
 
   const nextSlide = () => {
@@ -599,13 +663,13 @@ export default function App() {
       
       {/* Novedad Banner */}
       <a 
-        href="https://acaislab.com/karekaumovil" 
+        href="https://www.instagram.com/reel/DejhMmuxYTu/?utm_source=ig_web_button_share_sheet" 
         target="_blank" 
         rel="noopener noreferrer"
-        className="fixed bottom-6 left-6 z-50 flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-full shadow-[0_8px_30px_rgb(239,68,68,0.3)] hover:shadow-[0_8px_40px_rgb(239,68,68,0.5)] hover:-translate-y-1 transition-all duration-300"
+        className="fixed bottom-6 left-6 z-50 flex items-center gap-2.5 px-4 sm:px-6 py-3.5 bg-gradient-to-r from-pink-600 via-rose-600 to-amber-500 text-white rounded-full shadow-[0_8px_30px_rgba(244,63,94,0.35)] hover:shadow-[0_8px_40px_rgba(244,63,94,0.55)] hover:-translate-y-1 transition-all duration-300 border border-white/20 backdrop-blur-md"
       >
-        <Smartphone className="w-5 h-5" />
-        <span className="font-medium text-sm hidden sm:inline">Karekau para el celu ¡Ya disponible!</span>
+        <Sparkles className="w-5 h-5 text-amber-200 animate-pulse shrink-0" />
+        <span className="font-semibold text-xs sm:text-sm">Quedé semifinalista del GTP Chile ✨</span>
       </a>
     </div>
   );
