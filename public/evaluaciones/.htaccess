@@ -1,0 +1,4 @@
+DirectoryIndex index.html
+<IfModule mod_dir.c>
+  DirectorySlash On
+</IfModule>

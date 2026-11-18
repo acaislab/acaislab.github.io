@@ -1,0 +1,17 @@
+{
+  "name": "Evaluaciones Semestrales",
+  "short_name": "Evaluaciones",
+  "description": "Evaluaciones musicales interactivas para 3° a 8° Básico en Chile.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#4338ca",
+  "icons": [
+    {
+      "src": "./favicon.ico",
+      "sizes": "16x16 32x32 48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}
