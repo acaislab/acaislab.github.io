@@ -1,0 +1,10 @@
+Coloca aquí los archivos de audio MP3 de la prueba Música Educación Básica 2020 (EB-AM):
+- audio_1.mp3 (Pregunta 19)
+- audio_2.mp3 (Pregunta 20)
+- audio_3.mp3 (Pregunta 25)
+- audio_4.mp3 (Pregunta 28)
+- audio_5.mp3 (Pregunta 31)
+- audio_6.mp3 (Pregunta 32)
+- audio_7.mp3 (Pregunta 41)
+- audio_8.mp3 (Pregunta 42)
+- audio_9.mp3 (Pregunta 43)

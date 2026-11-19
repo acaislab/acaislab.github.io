@@ -1,0 +1,23 @@
+{
+  "id": "2020-musica-eb",
+  "title": "Música Educación Básica 2020 (EB-AM)",
+  "subject": "Música",
+  "level": "Educación Básica",
+  "year": 2020,
+  "code": "EB-AM",
+  "durationMinutes": 150,
+  "totalQuestions": 60,
+  "pdfFile": "prueba.pdf",
+  "answersFile": "respuestas.pdf",
+  "audios": {
+    "19": "audio_1.mp3",
+    "20": "audio_2.mp3",
+    "25": "audio_3.mp3",
+    "28": "audio_4.mp3",
+    "31": "audio_5.mp3",
+    "32": "audio_6.mp3",
+    "41": "audio_7.mp3",
+    "42": "audio_8.mp3",
+    "43": "audio_9.mp3"
+  }
+}

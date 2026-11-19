@@ -1,0 +1,292 @@
+{
+  "1": {
+    "pageIndex": 8,
+    "topFrac": 0.045,
+    "bottomFrac": 0.42
+  },
+  "2": {
+    "pageIndex": 8,
+    "topFrac": 0.44,
+    "bottomFrac": 0.82
+  },
+  "3": {
+    "pageIndex": 9,
+    "topFrac": 0.045,
+    "bottomFrac": 0.52
+  },
+  "4": {
+    "pageIndex": 9,
+    "topFrac": 0.54,
+    "bottomFrac": 0.8
+  },
+  "5": {
+    "pageIndex": 10,
+    "topFrac": 0.045,
+    "bottomFrac": 0.6
+  },
+  "6": {
+    "pageIndex": 11,
+    "topFrac": 0.045,
+    "bottomFrac": 0.44
+  },
+  "7": {
+    "pageIndex": 11,
+    "topFrac": 0.455,
+    "bottomFrac": 0.68
+  },
+  "8": {
+    "pageIndex": 12,
+    "topFrac": 0.045,
+    "bottomFrac": 0.43
+  },
+  "9": {
+    "pageIndex": 12,
+    "topFrac": 0.445,
+    "bottomFrac": 0.72
+  },
+  "10": {
+    "pageIndex": 13,
+    "topFrac": 0.045,
+    "bottomFrac": 0.34
+  },
+  "11": {
+    "pageIndex": 13,
+    "topFrac": 0.34,
+    "bottomFrac": 0.78
+  },
+  "12": {
+    "pageIndex": 14,
+    "topFrac": 0.04,
+    "bottomFrac": 0.34
+  },
+  "13": {
+    "pageIndex": 14,
+    "topFrac": 0.36,
+    "bottomFrac": 0.91
+  },
+  "14": {
+    "pageIndex": 15,
+    "topFrac": 0.04,
+    "bottomFrac": 0.34
+  },
+  "15": {
+    "pageIndex": 15,
+    "topFrac": 0.34,
+    "bottomFrac": 0.63
+  },
+  "16": {
+    "pageIndex": 16,
+    "topFrac": 0.045,
+    "bottomFrac": 0.35
+  },
+  "17": {
+    "pageIndex": 16,
+    "topFrac": 0.35,
+    "bottomFrac": 0.63
+  },
+  "18": {
+    "pageIndex": 16,
+    "topFrac": 0.65,
+    "bottomFrac": 0.91
+  },
+  "19": {
+    "pageIndex": 17,
+    "topFrac": 0.04,
+    "bottomFrac": 0.31
+  },
+  "20": {
+    "pageIndex": 17,
+    "topFrac": 0.32,
+    "bottomFrac": 0.56
+  },
+  "21": {
+    "pageIndex": 17,
+    "topFrac": 0.57,
+    "bottomFrac": 0.8
+  },
+  "22": {
+    "pageIndex": 18,
+    "topFrac": 0.04,
+    "bottomFrac": 0.28
+  },
+  "23": {
+    "pageIndex": 18,
+    "topFrac": 0.295,
+    "bottomFrac": 0.74
+  },
+  "24": {
+    "pageIndex": 19,
+    "topFrac": 0.045,
+    "bottomFrac": 0.5
+  },
+  "25": {
+    "pageIndex": 19,
+    "topFrac": 0.515,
+    "bottomFrac": 0.75
+  },
+  "26": {
+    "pageIndex": 20,
+    "topFrac": 0.045,
+    "bottomFrac": 0.28
+  },
+  "27": {
+    "pageIndex": 20,
+    "topFrac": 0.295,
+    "bottomFrac": 0.53
+  },
+  "28": {
+    "pageIndex": 20,
+    "topFrac": 0.55,
+    "bottomFrac": 0.77
+  },
+  "29": {
+    "pageIndex": 21,
+    "topFrac": 0.045,
+    "bottomFrac": 0.28
+  },
+  "30": {
+    "pageIndex": 21,
+    "topFrac": 0.295,
+    "bottomFrac": 0.53
+  },
+  "31": {
+    "pageIndex": 21,
+    "topFrac": 0.55,
+    "bottomFrac": 0.77
+  },
+  "32": {
+    "pageIndex": 22,
+    "topFrac": 0.045,
+    "bottomFrac": 0.28
+  },
+  "33": {
+    "pageIndex": 22,
+    "topFrac": 0.295,
+    "bottomFrac": 0.51
+  },
+  "34": {
+    "pageIndex": 22,
+    "topFrac": 0.53,
+    "bottomFrac": 0.9
+  },
+  "35": {
+    "pageIndex": 23,
+    "topFrac": 0.045,
+    "bottomFrac": 0.51
+  },
+  "36": {
+    "pageIndex": 23,
+    "topFrac": 0.51,
+    "bottomFrac": 0.74
+  },
+  "37": {
+    "pageIndex": 24,
+    "topFrac": 0.045,
+    "bottomFrac": 0.6
+  },
+  "38": {
+    "pageIndex": 25,
+    "topFrac": 0.03,
+    "bottomFrac": 0.52
+  },
+  "39": {
+    "pageIndex": 26,
+    "topFrac": 0.03,
+    "bottomFrac": 0.56
+  },
+  "40": {
+    "pageIndex": 27,
+    "topFrac": 0.04,
+    "bottomFrac": 0.62
+  },
+  "41": {
+    "pageIndex": 27,
+    "topFrac": 0.64,
+    "bottomFrac": 0.88
+  },
+  "42": {
+    "pageIndex": 28,
+    "topFrac": 0.045,
+    "bottomFrac": 0.37
+  },
+  "43": {
+    "pageIndex": 28,
+    "topFrac": 0.39,
+    "bottomFrac": 0.64
+  },
+  "44": {
+    "pageIndex": 28,
+    "topFrac": 0.66,
+    "bottomFrac": 0.87
+  },
+  "45": {
+    "pageIndex": 29,
+    "topFrac": 0.045,
+    "bottomFrac": 0.65
+  },
+  "46": {
+    "pageIndex": 29,
+    "topFrac": 0.67,
+    "bottomFrac": 0.9
+  },
+  "47": {
+    "pageIndex": 30,
+    "topFrac": 0.045,
+    "bottomFrac": 0.62
+  },
+  "48": {
+    "pageIndex": 30,
+    "topFrac": 0.635,
+    "bottomFrac": 0.89
+  },
+  "49": {
+    "pageIndex": 31,
+    "topFrac": 0.045,
+    "bottomFrac": 0.27
+  },
+  "50": {
+    "pageIndex": 31,
+    "topFrac": 0.28,
+    "bottomFrac": 0.84
+  },
+  "51": {
+    "pageIndex": 32,
+    "topFrac": 0.045,
+    "bottomFrac": 0.49
+  },
+  "52": {
+    "pageIndex": 32,
+    "topFrac": 0.5,
+    "bottomFrac": 0.76
+  },
+  "53": {
+    "pageIndex": 33,
+    "topFrac": 0.045,
+    "bottomFrac": 0.31
+  },
+  "54": {
+    "pageIndex": 33,
+    "topFrac": 0.32,
+    "bottomFrac": 0.56
+  },
+  "55": {
+    "pageIndex": 33,
+    "topFrac": 0.57,
+    "bottomFrac": 0.81
+  },
+  "56": {
+    "pageIndex": 34,
+    "topFrac": 0.045,
+    "bottomFrac": 0.33
+  },
+  "57": {
+    "pageIndex": 34,
+    "topFrac": 0.345,
+    "bottomFrac": 0.58
+  },
+  "58": {
+    "pageIndex": 34,
+    "topFrac": 0.595,
+    "bottomFrac": 0.81
+  }
+}

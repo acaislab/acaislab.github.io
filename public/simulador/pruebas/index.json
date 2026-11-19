@@ -1,0 +1,49 @@
+{
+  "exams": [
+    {
+      "id": "2024-musica-eb",
+      "title": "Música Educación Básica 2024 (EB-AM)",
+      "subject": "Música",
+      "level": "Educación Básica",
+      "year": 2024,
+      "code": "EB-AM",
+      "folder": "2024-musica-eb"
+    },
+    {
+      "id": "2023-musica-eb",
+      "title": "Música Educación Básica 2023 (EB-AM)",
+      "subject": "Música",
+      "level": "Educación Básica",
+      "year": 2023,
+      "code": "EB-AM",
+      "folder": "2023-musica-eb"
+    },
+    {
+      "id": "2021-musica-eb",
+      "title": "Música Educación Básica 2021 (EB-AM)",
+      "subject": "Música",
+      "level": "Educación Básica",
+      "year": 2021,
+      "code": "EB-AM",
+      "folder": "2021-musica-eb"
+    },
+    {
+      "id": "2020-musica-eb",
+      "title": "Música Educación Básica 2020 (EB-AM)",
+      "subject": "Música",
+      "level": "Educación Básica",
+      "year": 2020,
+      "code": "EB-AM",
+      "folder": "2020-musica-eb"
+    },
+    {
+      "id": "2019-musica-eb",
+      "title": "Música Educación Básica 2019 (EB-AM)",
+      "subject": "Música",
+      "level": "Educación Básica",
+      "year": 2019,
+      "code": "EB-AM",
+      "folder": "2019-musica-eb"
+    }
+  ]
+}

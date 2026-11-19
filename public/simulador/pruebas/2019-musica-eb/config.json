@@ -1,0 +1,46 @@
+{
+  "id": "2019-musica-eb",
+  "title": "Música Educación Básica 2019 (EB-AM)",
+  "subject": "Música",
+  "level": "Educación Básica",
+  "year": 2019,
+  "code": "EB-AM",
+  "durationMinutes": 150,
+  "totalQuestions": 58,
+  "pdfFile": "prueba.pdf",
+  "answersFile": "respuestas.pdf",
+  "openQuestions": [
+    {
+      "id": "dev-1",
+      "number": 1,
+      "label": "Pregunta de desarrollo 1",
+      "pageIndex": 3,
+      "topFrac": 0.04,
+      "bottomFrac": 0.64
+    },
+    {
+      "id": "dev-2",
+      "number": 2,
+      "label": "Pregunta de desarrollo 2",
+      "pageIndex": 5,
+      "topFrac": 0.04,
+      "bottomFrac": 0.54
+    }
+  ],
+  "audios": {
+    "19": "pregunta_19.mp3",
+    "20": "pregunta_20.mp3",
+    "21": "pregunta_21.mp3",
+    "22": "pregunta_22.mp3",
+    "25": "pregunta_25.mp3",
+    "27": "pregunta_27.mp3",
+    "28": "pregunta_28.mp3",
+    "29": "pregunta_29.mp3",
+    "30": "pregunta_30.mp3",
+    "31": "pregunta_31.mp3",
+    "32": "pregunta_32.mp3",
+    "41": "pregunta_41.mp3",
+    "42": "pregunta_42.mp3",
+    "43": "pregunta_43.mp3"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "id": "2023-musica-eb",
+  "title": "Música Educación Básica 2023 (EB-AM)",
+  "subject": "Música",
+  "level": "Educación Básica",
+  "year": 2023,
+  "code": "EB-AM",
+  "durationMinutes": 150,
+  "totalQuestions": 60,
+  "pdfFile": "prueba.pdf",
+  "answersFile": "respuestas.pdf",
+  "audios": {
+    "20": "track_2.mp3",
+    "30": "track_12.mp3",
+    "39": "track_19.mp3",
+    "41": "track_20.mp3"
+  }
+}

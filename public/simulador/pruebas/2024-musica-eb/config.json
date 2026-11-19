@@ -1,0 +1,17 @@
+{
+  "id": "2024-musica-eb",
+  "title": "Música Educación Básica 2024 (EB-AM)",
+  "subject": "Música",
+  "level": "Educación Básica",
+  "year": 2024,
+  "code": "EB-AM",
+  "durationMinutes": 150,
+  "totalQuestions": 60,
+  "pdfFile": "prueba.pdf",
+  "answersFile": "respuestas.xlsx",
+  "audios": {
+    "11": "audio_1.mp3",
+    "13": "audio_2.mp3",
+    "40": "audio_3.mp3"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "2021-musica-eb",
+  "title": "Música Educación Básica 2021 (EB-AM)",
+  "subject": "Música",
+  "level": "Educación Básica",
+  "year": 2021,
+  "code": "EB-AM",
+  "durationMinutes": 150,
+  "totalQuestions": 60,
+  "pdfFile": "prueba.pdf",
+  "answersFile": "respuestas.pdf",
+  "audios": {
+    "20": "track_2.mp3"
+  }
+}
