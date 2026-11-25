@@ -41,7 +41,7 @@ export interface NewsPost {
   links?: PostLink[];
 }
 
-type StoredUserReactions = Record<string, Partial<Record<ReactionType, boolean>>>; // comentario //
+type StoredUserReactions = Record<string, Partial<Record<ReactionType, boolean>>>;
 
 const STORAGE_KEY = 'acaislab_noticias_user_reactions_v2';
 
