@@ -13,24 +13,6 @@
   <body class="bg-[#050A15] text-slate-50 font-sans antialiased selection:bg-violet-500/30">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script>
-      window.addEventListener('load', function() {
-        var script = document.createElement('script');
-        script.src = 'https://storage.ko-fi.com/cdn/scripts/overlay-widget.js';
-        script.async = true;
-        script.onload = function() {
-          if (window.kofiWidgetOverlay) {
-            window.kofiWidgetOverlay.draw('acaislab', {
-              'type': 'floating-chat',
-              'floating-chat.donateButton.text': 'Tip Us',
-              'floating-chat.donateButton.background-color': '#00b9fe',
-              'floating-chat.donateButton.text-color': '#fff'
-            });
-          }
-        };
-        document.body.appendChild(script);
-      });
-    </script>
   </body>
 </html>
 

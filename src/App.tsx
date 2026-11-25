@@ -18,11 +18,23 @@ import {
   ChevronLeft,
   ChevronRight,
   Instagram,
-  Smartphone
+  Smartphone,
+  Menu
 } from 'lucide-react';
 import { SurveyPage } from './components/SurveyPage';
+import { NewsFeed } from './components/NewsFeed';
+import { GuidesPage } from './components/GuidesPage';
 
 const APPS = [
+  {
+    id: 'guiasinteractivas',
+    name: 'Guías Interactivas',
+    description: 'Accede a las guías interactivas de clase y actividades musicales para trabajar en línea',
+    icon: BookOpen,
+    url: '#guias',
+    internalPath: '#guias',
+    color: 'from-cyan-500 to-violet-600'
+  },
   {
     id: 'repasomemorice',
     name: 'Repaso Conceptual',
@@ -135,6 +147,7 @@ const HERO_SLIDES = [
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -145,19 +158,40 @@ function Navbar() {
   }, []);
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'glass-panel py-4' : 'bg-transparent py-6'}`}>
-      <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center relative">
-        <a href="#" className="text-2xl font-display font-bold tracking-tight flex items-center gap-1">
+    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled || mobileMenuOpen ? 'glass-panel py-4' : 'bg-transparent py-6'}`}>
+      <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center gap-8 relative">
+        <a href="#" className="text-2xl font-display font-bold tracking-tight flex items-center gap-1 whitespace-nowrap shrink-0">
           Aca<span className="relative">i<span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[#00E5FF] text-lg leading-none drop-shadow-[0_0_8px_rgba(0,229,255,0.8)]">..</span></span>s Lab
         </a>
 
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
-          <a href="#inicio" className="hover:text-white transition-colors">Inicio</a>
-          <a href="#apps" className="hover:text-white transition-colors">Apps</a>
-          <a href="#sobre-mi" className="hover:text-white transition-colors">Sobre Mí</a>
-          <a href="#faqs" className="hover:text-white transition-colors">FAQs</a>
+          <a href="#inicio" className="hover:text-white transition-colors whitespace-nowrap shrink-0">Inicio</a>
+          <a href="#apps" className="hover:text-white transition-colors whitespace-nowrap shrink-0">Apps</a>
+          <a href="#sobre-mi" className="hover:text-white transition-colors whitespace-nowrap shrink-0">Sobre Mí</a>
+          <a href="#noticias" className="hover:text-white transition-colors whitespace-nowrap shrink-0">Noticias</a>
+          <a href="#faqs" className="hover:text-white transition-colors whitespace-nowrap shrink-0">FAQs</a>
         </div>
+
+        <button
+          type="button"
+          onClick={() => setMobileMenuOpen((prev) => !prev)}
+          aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+          aria-expanded={mobileMenuOpen}
+          className="md:hidden p-2 rounded-xl bg-white/5 border border-white/10 text-slate-200 hover:text-white transition-colors cursor-pointer"
+        >
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </div>
+
+      {mobileMenuOpen && (
+        <div className="md:hidden px-6 pt-4 pb-2 flex flex-col gap-3 text-sm font-medium text-slate-200 border-t border-white/10 mt-4">
+          <a href="#inicio" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-white">Inicio</a>
+          <a href="#apps" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-white">Apps</a>
+          <a href="#sobre-mi" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-white">Sobre Mí</a>
+          <a href="#noticias" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-white">Noticias</a>
+          <a href="#faqs" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-white">FAQs</a>
+        </div>
+      )}
     </nav>
   );
 }
@@ -347,15 +381,15 @@ function AppCardImage({ app }: { app: typeof APPS[0] }) {
   }
 
   return (
-    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${app.color} flex items-center justify-center mb-8 shadow-lg`}>
+    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${app.color} flex items-center justify-center mb-8 shadow-lg`}>
       <app.icon className="w-7 h-7 text-white" />
     </div>
   );
 }
 
-function AppsShowcase() {
+function AppsShowcase({ onNavigate }: { onNavigate: (path: string) => void }) {
   return (
-    <section id="apps" className="py-32 px-6">
+    <section id="apps" className="py-32 px-6 scroll-mt-24">
       <div className="max-w-7xl mx-auto">
         <div className="mb-16 md:mb-24">
           <h2 className="text-3xl md:text-5xl font-display font-bold mb-6">Prueba Las Apps ¡Son Gratis!</h2>
@@ -365,30 +399,39 @@ function AppsShowcase() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {APPS.map((app, index) => (
-            <motion.a
-              key={app.id}
-              href={app.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
-              className="glass-panel rounded-3xl p-8 group hover:bg-white/10 transition-all duration-500 flex flex-col h-full cursor-pointer block"
-            >
-              <AppCardImage app={app} />
-              <h3 className="text-2xl font-display font-semibold mb-4 group-hover:text-[#00E5FF] transition-colors">{app.name}</h3>
-              <p className="text-slate-400 font-light leading-relaxed mb-8 flex-grow">
-                {app.description}
-              </p>
-              <div 
-                className="inline-flex items-center gap-2 text-sm font-medium text-white/80 group-hover:text-white transition-colors mt-auto w-fit"
+          {APPS.map((app, index) => {
+            const isInternal = Boolean('internalPath' in app && app.internalPath);
+            return (
+              <motion.a
+                key={app.id}
+                href={app.url}
+                target={isInternal ? undefined : '_blank'}
+                rel={isInternal ? undefined : 'noopener noreferrer'}
+                onClick={(e) => {
+                  if ('internalPath' in app && app.internalPath) {
+                    e.preventDefault();
+                    onNavigate(app.internalPath);
+                  }
+                }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, duration: 0.5 }}
+                className="glass-panel rounded-3xl p-8 group hover:bg-white/10 transition-all duration-500 flex flex-col h-full cursor-pointer block"
               >
-                Abrir aplicación <ExternalLink className="w-4 h-4" />
-              </div>
-            </motion.a>
-          ))}
+                <AppCardImage app={app} />
+                <h3 className="text-2xl font-display font-semibold mb-4 group-hover:text-[#00E5FF] transition-colors">{app.name}</h3>
+                <p className="text-slate-400 font-light leading-relaxed mb-8 flex-grow">
+                  {app.description}
+                </p>
+                <div 
+                  className="inline-flex items-center gap-2 text-sm font-medium text-white/80 group-hover:text-white transition-colors mt-auto w-fit"
+                >
+                  {isInternal ? 'Explorar guías' : 'Abrir aplicación'} <ExternalLink className="w-4 h-4" />
+                </div>
+              </motion.a>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -397,7 +440,7 @@ function AppsShowcase() {
 
 function About() {
   return (
-    <section id="sobre-mi" className="py-32 px-6 relative">
+    <section id="sobre-mi" className="py-32 px-6 relative scroll-mt-24">
       <div className="max-w-7xl mx-auto">
         <div className="glass-panel rounded-[3rem] p-8 md:p-16 overflow-hidden relative">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center relative z-10">
@@ -497,7 +540,7 @@ function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faqs" className="py-32 px-6">
+    <section id="faqs" className="py-32 px-6 scroll-mt-24">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-display font-bold mb-6">Preguntas Frecuentes</h2>
@@ -613,10 +656,17 @@ function Footer() {
   );
 }
 
+function checkIsGuidesRoute(pathname: string, hash: string) {
+  return pathname === '/guias' || pathname === '/guias/' || hash === '#guias';
+}
+
 export default function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPinned, setIsPinned] = useState(false);
   const [isSurveyPage, setIsSurveyPage] = useState(window.location.pathname === '/encuesta');
+  const [isGuidesPage, setIsGuidesPage] = useState(
+    checkIsGuidesRoute(window.location.pathname, window.location.hash)
+  );
   const [isMemoricePage, setIsMemoricePage] = useState(
     window.location.pathname === '/repasomemorice' || 
     window.location.pathname === '/repasomemorice/' ||
@@ -624,22 +674,58 @@ export default function App() {
     window.location.pathname === '/memorice.html'
   );
 
+  const syncRouteState = (pathname: string, hash: string) => {
+    setIsSurveyPage(pathname === '/encuesta');
+    setIsGuidesPage(checkIsGuidesRoute(pathname, hash));
+    setIsMemoricePage(
+      pathname === '/repasomemorice' || 
+      pathname === '/repasomemorice/' ||
+      pathname === '/memorice' ||
+      pathname === '/memorice.html'
+    );
+  };
+
+  const navigateTo = (target: string) => {
+    if (target.startsWith('#')) {
+      window.history.pushState({}, '', `/${target}`);
+      syncRouteState(window.location.pathname, target);
+    } else {
+      window.history.pushState({}, '', target);
+      syncRouteState(target, '');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   useEffect(() => {
     const handleLocationChange = () => {
-      setIsSurveyPage(window.location.pathname === '/encuesta');
-      setIsMemoricePage(
-        window.location.pathname === '/repasomemorice' || 
-        window.location.pathname === '/repasomemorice/' ||
-        window.location.pathname === '/memorice' ||
-        window.location.pathname === '/memorice.html'
-      );
+      syncRouteState(window.location.pathname, window.location.hash);
     };
     window.addEventListener('popstate', handleLocationChange);
-    return () => window.removeEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
   }, []);
+
+  useEffect(() => {
+    if (isPinned || isSurveyPage || isGuidesPage || isMemoricePage) return;
+
+    const currentSlide = HERO_SLIDES[currentIndex];
+    const duration = currentSlide.type === 'video' ? 30000 : 9000;
+    
+    const timer = setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, duration);
+    return () => clearTimeout(timer);
+  }, [currentIndex, isPinned, isSurveyPage, isGuidesPage, isMemoricePage]);
 
   if (isSurveyPage) {
     return <SurveyPage />;
+  }
+
+  if (isGuidesPage) {
+    return <GuidesPage onBack={() => navigateTo('/')} />;
   }
 
   if (isMemoricePage) {
@@ -660,18 +746,6 @@ export default function App() {
     setCurrentIndex((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
   };
 
-  useEffect(() => {
-    if (isPinned) return;
-
-    const currentSlide = HERO_SLIDES[currentIndex];
-    const duration = currentSlide.type === 'video' ? 30000 : 9000;
-    
-    const timer = setTimeout(() => {
-      setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, duration);
-    return () => clearTimeout(timer);
-  }, [currentIndex, isPinned]);
-
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -684,8 +758,9 @@ export default function App() {
           isPinned={isPinned}
           setIsPinned={setIsPinned}
         />
-        <AppsShowcase />
+        <AppsShowcase onNavigate={navigateTo} />
         <About />
+        <NewsFeed onNavigate={navigateTo} />
         <Support />
         <FAQ />
       </main>
@@ -693,13 +768,19 @@ export default function App() {
       
       {/* Novedad Banner */}
       <a 
-        href="https://www.instagram.com/reel/DejhMmuxYTu/?utm_source=ig_web_button_share_sheet" 
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="fixed bottom-6 left-6 z-50 flex items-center gap-2.5 px-4 sm:px-6 py-3.5 bg-gradient-to-r from-pink-600 via-rose-600 to-amber-500 text-white rounded-full shadow-[0_8px_30px_rgba(244,63,94,0.35)] hover:shadow-[0_8px_40px_rgba(244,63,94,0.55)] hover:-translate-y-1 transition-all duration-300 border border-white/20 backdrop-blur-md"
+        href="#aviso-26" 
+        onClick={(e) => {
+          e.preventDefault();
+          if (window.location.hash !== '#aviso-26') {
+            window.location.hash = '#aviso-26';
+          } else {
+            document.getElementById('aviso-26')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }}
+        className="fixed bottom-5 left-5 z-50 flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-cyan-600 via-violet-600 to-fuchsia-600 text-white rounded-full shadow-[0_6px_24px_rgba(0,229,255,0.28)] hover:shadow-[0_8px_30px_rgba(139,92,246,0.45)] hover:-translate-y-0.5 transition-all duration-300 border border-white/20"
       >
-        <Sparkles className="w-5 h-5 text-amber-200 animate-pulse shrink-0" />
-        <span className="font-semibold text-xs sm:text-sm">Quedé semifinalista del GTP Chile ✨</span>
+        <BookOpen className="w-4 h-4 text-cyan-200 shrink-0" />
+        <span className="font-semibold text-xs whitespace-nowrap">Nuevas Guías Interactivas</span>
       </a>
     </div>
   );

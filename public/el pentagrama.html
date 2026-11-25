@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notación Musical - Guía 1 Profesor Isaac Araya</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- jsPDF para generación directa del Certificado en PDF (funciona dentro de iframes) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#0b132b',
+                        },
+                        amber: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Cinzel', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles & Interactive SVG Highlights */
+        .svg-line, .svg-space {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        /* Mobile-friendly: hitboxes apply hover effects only to the visual line inside */
+        .svg-line:hover line:last-child {
+            stroke: #f59e0b;
+            stroke-width: 6px;
+        }
+        .svg-space:hover {
+            fill: rgba(245, 158, 11, 0.25);
+        }
+        .active-element-line line:last-child {
+            stroke: #d97706 !important;
+            stroke-width: 7px !important;
+        }
+        .active-element-space {
+            fill: rgba(217, 119, 6, 0.4) !important;
+        }
+        
+        /* Mobile Optimizations */
+        button, a, input, .cursor-pointer, .svg-line, .svg-space, .game-element, .clef-step-btn {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Certificate Special Styling */
+        .certificate-border {
+            border: 12px solid #1e293b;
+            outline: 4px solid #d97706;
+            outline-offset: -8px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        /* Screenshot Capture Mode */
+        body.screenshot-active {
+            background: #0f172a !important;
+        }
+        body.screenshot-active .hide-on-screenshot {
+            display: none !important;
+        }
+        body.screenshot-active #certificate-section {
+            display: block !important;
+            padding: 0 !important;
+            margin: 0 auto !important;
+        }
+        body.screenshot-active #screenshot-wrapper {
+            box-shadow: 0 0 50px rgba(245, 158, 11, 0.3);
+            transform: scale(1);
+        }
+
+        /* Modal Overlay Transition */
+        .modal-fade {
+            transition: opacity 0.25s ease-in-out;
+        }
+
+        /* Print Media Styles: Hides all UI navigation & forces clean single-page certificate */
+        @media print {
+            header, footer, .hide-on-screenshot, #quiz-container, #screenshot-banner, .tab-content:not(#module-4) {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            main {
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+            }
+            #module-4 {
+                display: block !important;
+            }
+            #certificate-section {
+                display: block !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            #screenshot-wrapper {
+                box-shadow: none !important;
+                border: 6px solid #1e293b !important;
+                outline: 2px solid #d97706 !important;
+                outline-offset: -4px !important;
+                page-break-inside: avoid !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 auto !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-white">
+
+    <!-- HEADER / APP BAR -->
+    <header class="bg-navy-900 text-white shadow-md sticky top-0 z-40 hide-on-screenshot">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-500 p-2.5 rounded-xl text-navy-900 font-bold shadow-md">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg sm:text-xl leading-tight tracking-wide text-white">Notación Musical - Guía 1 Profesor Isaac Araya</h1>
+                    <p class="text-xs text-amber-400 font-medium">Guía Didáctica Introductoria: Pentagrama, Llave de Sol y Compases</p>
+                </div>
+            </div>
+
+            <!-- Progress Bar & Navigation Steps -->
+            <div class="w-full md:w-auto flex flex-col items-end gap-1">
+                <div class="flex space-x-1 text-xs font-semibold text-slate-300">
+                    <span id="step-indicator">Paso 1 de 4</span>
+                </div>
+                <div class="w-full md:w-64 bg-navy-800 h-2.5 rounded-full overflow-hidden border border-slate-700">
+                    <div id="progress-bar" class="bg-amber-500 h-full w-1/4 transition-all duration-300"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Controls -->
+        <div class="bg-navy-950 border-t border-slate-800">
+            <div class="max-w-6xl mx-auto flex overflow-x-auto text-xs sm:text-sm">
+                <button onclick="switchTab(1)" id="tab-btn-1" class="tab-btn px-4 py-3 font-semibold border-b-2 border-amber-500 text-amber-400 flex items-center gap-2 whitespace-nowrap">
+                    <span>1.</span> El Pentagrama
+                </button>
+                <button onclick="switchTab(2)" id="tab-btn-2" class="tab-btn px-4 py-3 font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
+                    <span>2.</span> La Llave de Sol
+                </button>
+                <button onclick="switchTab(3)" id="tab-btn-3" class="tab-btn px-4 py-3 font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
+                    <span>3.</span> Líneas Divisorias
+                </button>
+                <button onclick="switchTab(4)" id="tab-btn-4" class="tab-btn px-4 py-3 font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
+                    <span>4.</span> Evaluación y Comprobante
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-5xl mx-auto w-full px-4 py-6 flex-grow">
+
+        <!-- Banner Screenshot Warning (Only visible when Screenshot mode active) -->
+        <div id="screenshot-banner" class="hidden bg-amber-500 text-navy-900 font-bold p-4 rounded-xl mb-6 text-center shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">📸</span>
+                <div class="text-left">
+                    <p class="text-sm uppercase tracking-wider font-extrabold">Modo Captura de Pantalla Activado</p>
+                    <p class="text-xs font-normal">Toma la captura completa de tu comprobante y envíasela a tu docente Isaac Araya.</p>
+                </div>
+            </div>
+            <button onclick="toggleScreenshotMode(false)" class="bg-navy-900 text-white px-4 py-2 rounded-lg text-xs hover:bg-navy-800 transition">
+                ✕ Salir del Modo Captura
+            </button>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- MÓDULO 1: EL PENTAGRAMA -->
+        <!-- ========================================== -->
+        <section id="module-1" class="tab-content space-y-6">
+            <!-- Concept Explanation -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="bg-amber-100 text-amber-700 font-bold px-3 py-1 rounded-full text-xs uppercase">Concepto Fundamental</span>
+                    <h2 class="text-2xl font-bold text-navy-900">1. El Pentagrama Musical</h2>
+                </div>
+                <p class="text-slate-600 leading-relaxed mb-4">
+                    La palabra <strong>Pentagrama</strong> proviene del griego: <em>Penta</em> (cinco) y <em>Grama</em> (línea). Es el soporte donde se escriben las notas y todos los signos musicales.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 text-sm">
+                    <div class="flex items-start gap-3">
+                        <div class="bg-navy-900 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</div>
+                        <div>
+                            <strong class="text-navy-900">5 Líneas y 4 Espacios:</strong> Las líneas son las barras horizontales y los espacios son las franjas comprendidas entre ellas.
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="bg-amber-500 text-navy-900 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">!</div>
+                        <div>
+                            <strong class="text-navy-900">Regla de Oro de Conteo:</strong> Las líneas y los espacios se cuentan <u>SIEMPRE de abajo hacia arriba</u> (la 1.ª línea es la inferior y la 5.ª es la superior).
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive SVG Pentagram Explorer -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="font-bold text-lg text-navy-900 mb-1">Explorador Interactivo</h3>
+                <p class="text-xs text-slate-500 mb-4">Pasa el ratón o toca cada línea o espacio para identificar su número exacto.</p>
+
+                <!-- SVG Canvas -->
+                <div class="relative bg-slate-50 rounded-xl p-4 border border-slate-200 overflow-hidden">
+                    <svg id="pentagram-explorer-svg" viewBox="0 0 800 240" class="w-full h-auto select-none">
+                        <!-- Background Spaces for Hover -->
+                        <rect x="50" y="50" width="700" height="30" class="svg-space" data-type="space" data-num="4" fill="transparent"/>
+                        <rect x="50" y="80" width="700" height="30" class="svg-space" data-type="space" data-num="3" fill="transparent"/>
+                        <rect x="50" y="110" width="700" height="30" class="svg-space" data-type="space" data-num="2" fill="transparent"/>
+                        <rect x="50" y="140" width="700" height="30" class="svg-space" data-type="space" data-num="1" fill="transparent"/>
+
+                        <!-- Lines with Transparent Hitboxes for Mobile -->
+                        <g class="svg-line" data-type="line" data-num="5">
+                            <line x1="50" y1="50" x2="750" y2="50" stroke="transparent" stroke-width="20" />
+                            <line x1="50" y1="50" x2="750" y2="50" stroke="#334155" stroke-width="4" stroke-linecap="round" />
+                        </g>
+                        <g class="svg-line" data-type="line" data-num="4">
+                            <line x1="50" y1="80" x2="750" y2="80" stroke="transparent" stroke-width="20" />
+                            <line x1="50" y1="80" x2="750" y2="80" stroke="#334155" stroke-width="4" stroke-linecap="round" />
+                        </g>
+                        <g class="svg-line" data-type="line" data-num="3">
+                            <line x1="50" y1="110" x2="750" y2="110" stroke="transparent" stroke-width="20" />
+                            <line x1="50" y1="110" x2="750" y2="110" stroke="#334155" stroke-width="4" stroke-linecap="round" />
+                        </g>
+                        <g class="svg-line" data-type="line" data-num="2">
+                            <line x1="50" y1="140" x2="750" y2="140" stroke="transparent" stroke-width="20" />
+                            <line x1="50" y1="140" x2="750" y2="140" stroke="#334155" stroke-width="4" stroke-linecap="round" />
+                        </g>
+                        <g class="svg-line" data-type="line" data-num="1">
+                            <line x1="50" y1="170" x2="750" y2="170" stroke="transparent" stroke-width="20" />
+                            <line x1="50" y1="170" x2="750" y2="170" stroke="#334155" stroke-width="4" stroke-linecap="round" />
+                        </g>
+
+                        <!-- Side Labels -->
+                        <text x="35" y="174" font-size="14" font-weight="bold" fill="#64748b" text-anchor="end">1.ª Línea</text>
+                        <text x="35" y="144" font-size="14" font-weight="bold" fill="#64748b" text-anchor="end">2.ª Línea</text>
+                        <text x="35" y="114" font-size="14" font-weight="bold" fill="#64748b" text-anchor="end">3.ª Línea</text>
+                        <text x="35" y="84" font-size="14" font-weight="bold" fill="#64748b" text-anchor="end">4.ª Línea</text>
+                        <text x="35" y="54" font-size="14" font-weight="bold" fill="#64748b" text-anchor="end">5.ª Línea</text>
+
+                        <text x="765" y="160" font-size="13" font-weight="bold" fill="#94a3b8" text-anchor="start">1.ᵉʳ Espacio</text>
+                        <text x="765" y="130" font-size="13" font-weight="bold" fill="#94a3b8" text-anchor="start">2.º Espacio</text>
+                        <text x="765" y="100" font-size="13" font-weight="bold" fill="#94a3b8" text-anchor="start">3.ᵉʳ Espacio</text>
+                        <text x="765" y="70" font-size="13" font-weight="bold" fill="#94a3b8" text-anchor="start">4.º Espacio</text>
+                    </svg>
+                </div>
+
+                <!-- Display Box for Hovered Item -->
+                <div id="explorer-info" class="mt-4 p-3 bg-navy-900 text-white rounded-xl flex items-center justify-between text-sm">
+                    <span class="text-slate-300">Elemento seleccionado:</span>
+                    <span id="explorer-text" class="font-bold text-amber-400">Pasa el ratón sobre el pentagrama arriba</span>
+                </div>
+            </div>
+
+            <!-- Practical Practice Game with Reset Function & Correct Grammar -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-navy-900">Desafío Práctico del Pentagrama</h3>
+                        <p class="text-xs text-slate-500">Demuestra que sabes identificar líneas y espacios contando de abajo hacia arriba.</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="bg-amber-100 text-amber-800 font-bold px-3 py-1.5 rounded-lg text-xs">
+                            Progreso: <span id="m1-score">0</span> / 4
+                        </div>
+                        <button onclick="resetModule1Challenge()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1">
+                            🔄 Reiniciar Desafío
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Target Prompt -->
+                <div class="bg-slate-900 text-white p-4 rounded-xl text-center mb-4 border-2 border-amber-500/50">
+                    <span class="text-xs text-slate-400 block uppercase tracking-wider mb-1">Instrucción:</span>
+                    <span id="m1-target-prompt" class="text-xl font-extrabold text-amber-400">Cargando desafío...</span>
+                </div>
+
+                <!-- Interactive SVG for Game -->
+                <div class="relative bg-slate-50 rounded-xl p-4 border border-slate-200 overflow-hidden">
+                    <svg id="pentagram-game-svg" viewBox="0 0 800 240" class="w-full h-auto select-none">
+                        <!-- Spaces -->
+                        <rect x="50" y="50" width="700" height="30" class="svg-space game-element" data-type="space" data-num="4" fill="transparent"/>
+                        <rect x="50" y="80" width="700" height="30" class="svg-space game-element" data-type="space" data-num="3" fill="transparent"/>
+                        <rect x="50" y="110" width="700" height="30" class="svg-space game-element" data-type="space" data-num="2" fill="transparent"/>
+                        <rect x="50" y="140" width="700" height="30" class="svg-space game-element" data-type="space" data-num="1" fill="transparent"/>
+
+                        <!-- Lines with Transparent Hitboxes for Mobile -->
+                        <g class="svg-line game-element" data-type="line" data-num="5">
+                            <line x1="50" y1="50" x2="750" y2="50" stroke="transparent" stroke-width="20" />
+                            <line x1="50" y1="50" x2="750" y2="50" stroke="#334155" stroke-width="5" stroke-linecap="round" />
+                        </g>
+                        <g class="svg-line game-element" data-type="line" data-num="4">
+                            <line x1="50" y1="80" x2="750" y2="80" stroke="transparent" stroke-width="20" />
+                            <line x1="50" y1="80" x2="750" y2="80" stroke="#334155" stroke-width="5" stroke-linecap="round" />
+                        </g>
+                        <g class="svg-line game-element" data-type="line" data-num="3">
+                            <line x1="50" y1="110" x2="750" y2="110" stroke="transparent" stroke-width="20" />
+                            <line x1="50" y1="110" x2="750" y2="110" stroke="#334155" stroke-width="5" stroke-linecap="round" />
+                        </g>
+                        <g class="svg-line game-element" data-type="line" data-num="2">
+                            <line x1="50" y1="140" x2="750" y2="140" stroke="transparent" stroke-width="20" />
+                            <line x1="50" y1="140" x2="750" y2="140" stroke="#334155" stroke-width="5" stroke-linecap="round" />
+                        </g>
+                        <g class="svg-line game-element" data-type="line" data-num="1">
+                            <line x1="50" y1="170" x2="750" y2="170" stroke="transparent" stroke-width="20" />
+                            <line x1="50" y1="170" x2="750" y2="170" stroke="#334155" stroke-width="5" stroke-linecap="round" />
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Feedback Message -->
+                <div id="m1-feedback" class="mt-3 text-center text-sm font-semibold h-6"></div>
+            </div>
+
+            <!-- Navigation Button -->
+            <div class="flex justify-end">
+                <button onclick="switchTab(2)" class="bg-navy-900 hover:bg-navy-800 text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 shadow-md transition">
+                    Siguiente Módulo: La Llave de Sol ➔
+                </button>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- MÓDULO 2: LA LLAVE DE SOL -->
+        <!-- ========================================== -->
+        <section id="module-2" class="tab-content space-y-6 hidden">
+            <!-- Concept Explanation -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="bg-amber-100 text-amber-700 font-bold px-3 py-1 rounded-full text-xs uppercase">Concepto Fundamental</span>
+                    <h2 class="text-2xl font-bold text-navy-900">2. La Llave de Sol (Clave de Sol)</h2>
+                </div>
+                <p class="text-slate-600 leading-relaxed mb-4">
+                    Las líneas del pentagrama por sí solas no indican la altura de las notas. Para asignarles su nombre requerimos una referencia inicial: <strong>La Llave de Sol</strong>.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div class="text-amber-600 font-bold text-sm mb-1">🎯 Función de Referencia</div>
+                        <p class="text-xs text-slate-600">Le otorga identidad y nombre de nota a cada línea y espacio del pentagrama.</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div class="text-amber-600 font-bold text-sm mb-1">📍 Punto de Origen</div>
+                        <p class="text-xs text-slate-600">Comienza a trazarse obligatoriamente desde la <strong>2.ª línea</strong> del pentagrama.</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div class="text-amber-600 font-bold text-sm mb-1">🎵 Asignación de la Nota SOL</div>
+                        <p class="text-xs text-slate-600">Al nacer en la 2.ª línea, convierte automáticamente a toda esa 2.ª línea en la nota <strong>SOL</strong>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualizer with High-Accuracy Vector Treble Clef -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="font-bold text-lg text-navy-900 mb-1">Visualizador del Trazado y la Nota SOL</h3>
+                <p class="text-xs text-slate-500 mb-4">Haz clic en los botones para ver cómo se origina la Llave de Sol y cómo nombra a la 2.ª línea.</p>
+
+                <!-- Interactive Stage Controls -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button onclick="setClefStep(1)" id="clef-step-1" class="clef-step-btn px-4 py-2 rounded-lg text-xs font-bold bg-amber-500 text-navy-900 shadow">
+                        Paso 1: Punto de Inicio (2.ª Línea)
+                    </button>
+                    <button onclick="setClefStep(2)" id="clef-step-2" class="clef-step-btn px-4 py-2 rounded-lg text-xs font-bold bg-slate-200 text-slate-700 hover:bg-slate-300">
+                        Paso 2: Trazado de la Espiral y Bucle
+                    </button>
+                    <button onclick="setClefStep(3)" id="clef-step-3" class="clef-step-btn px-4 py-2 rounded-lg text-xs font-bold bg-slate-200 text-slate-700 hover:bg-slate-300">
+                        Paso 3: Asignación de la Nota SOL
+                    </button>
+                </div>
+
+                <!-- SVG Clef Canvas -->
+                <div class="bg-slate-900 rounded-xl p-6 border border-slate-800 text-center relative overflow-hidden">
+                    <svg viewBox="0 0 650 240" class="w-full max-w-2xl mx-auto h-auto select-none">
+                        <!-- Pentagram Lines -->
+                        <!-- Line 5 --> <line x1="40" y1="40" x2="610" y2="40" stroke="#475569" stroke-width="3"/>
+                        <!-- Line 4 --> <line x1="40" y1="75" x2="610" y2="75" stroke="#475569" stroke-width="3"/>
+                        <!-- Line 3 --> <line x1="40" y1="110" x2="610" y2="110" stroke="#475569" stroke-width="3"/>
+                        <!-- Line 2 (Highlighted) --> <line id="clef-line-2" x1="40" y1="145" x2="610" y2="145" stroke="#f59e0b" stroke-width="5"/>
+                        <!-- Line 1 --> <line x1="40" y1="180" x2="610" y2="180" stroke="#475569" stroke-width="3"/>
+
+                        <text x="620" y="149" font-size="12" font-weight="bold" fill="#f59e0b">2.ª Línea</text>
+
+                        <!-- Step 1 Origin Dot exactly on 2nd line (y=145, x=135) -->
+                        <circle id="clef-start-dot" cx="135" cy="145" r="8" fill="#f59e0b" class="animate-pulse"/>
+
+                        <!-- Standard Treble Clef Symbol aligned so spiral center wraps Line 2 (y=145) -->
+                        <g id="clef-vector-group" class="transition-all duration-500 opacity-90">
+                            <text x="135" y="169" font-size="170" font-family="'Cinzel', 'Times New Roman', serif" fill="#f59e0b" text-anchor="middle">𝄞</text>
+                        </g>
+
+                        <!-- Note SOL on 2nd Line (Step 3) -->
+                        <g id="note-sol-group" class="hidden transition-opacity duration-300">
+                            <line x1="135" y1="145" x2="320" y2="145" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4"/>
+                            <ellipse cx="320" cy="145" rx="14" ry="10" fill="#f59e0b" transform="rotate(-20 320 145)"/>
+                            <line x1="333" y1="142" x2="333" y2="85" stroke="#f59e0b" stroke-width="3.5"/>
+                            <text x="320" y="180" font-size="14" font-weight="bold" fill="#f59e0b" text-anchor="middle">Nota SOL (2.ª Línea)</text>
+                        </g>
+                    </svg>
+
+                    <!-- Text Explanation Box -->
+                    <div id="clef-explanation-box" class="mt-4 bg-navy-800/80 p-3 rounded-lg border border-slate-700 text-xs text-slate-200">
+                        📍 <strong>Paso 1:</strong> La Llave de Sol comienza obligatoriamente con un punto sobre la <strong>segunda línea</strong>.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Practice Check -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="font-bold text-lg text-navy-900 mb-2">Comprobación Rápida</h3>
+                <p class="text-xs text-slate-600 mb-4">Haz clic en la línea del pentagrama donde debe nacer la Llave de Sol para fijar la nota SOL:</p>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="checkClefOrigin(5)" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-semibold">5.ª Línea</button>
+                    <button onclick="checkClefOrigin(4)" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-semibold">4.ª Línea</button>
+                    <button onclick="checkClefOrigin(3)" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-semibold">3.ª Línea</button>
+                    <button onclick="checkClefOrigin(2)" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold rounded-lg text-xs">2.ª Línea</button>
+                    <button onclick="checkClefOrigin(1)" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-semibold">1.ª Línea</button>
+                </div>
+                <div id="clef-check-feedback" class="mt-3 text-sm font-semibold h-6"></div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between items-center">
+                <button onclick="switchTab(1)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-5 py-2.5 rounded-xl font-bold text-sm">
+                    ⏮ Volver al Pentagrama
+                </button>
+                <button onclick="switchTab(3)" class="bg-navy-900 hover:bg-navy-800 text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 shadow-md">
+                    Siguiente Módulo: Líneas Divisorias ➔
+                </button>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- MÓDULO 3: LÍNEAS DIVISORIAS Y COMPASES -->
+        <!-- ========================================== -->
+        <section id="module-3" class="tab-content space-y-6 hidden">
+            <!-- Concept Explanation -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="bg-amber-100 text-amber-700 font-bold px-3 py-1 rounded-full text-xs uppercase">Concepto Fundamental</span>
+                    <h2 class="text-2xl font-bold text-navy-900">3. Líneas Divisorias y Compases</h2>
+                </div>
+                <p class="text-slate-600 leading-relaxed mb-4">
+                    Para organizar las notas de forma ordenada en el tiempo, dividimos el pentagrama en casillas llamadas <strong>Compases</strong> mediante barras verticales denominadas <strong>Líneas Divisorias</strong>.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <strong class="text-navy-900 block mb-1">📏 Línea Divisoria Simple:</strong>
+                        <p class="text-xs text-slate-600">Una línea vertical única que atraviesa las 5 líneas. Separa un compás del siguiente.</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <strong class="text-navy-900 block mb-1">📦 El Compás:</strong>
+                        <p class="text-xs text-slate-600">Es el espacio delimitado entre dos líneas divisorias (o entre la llave y la primera línea divisoria).</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <strong class="text-navy-900 block mb-1">🏁 Doble Barra Final:</strong>
+                        <p class="text-xs text-slate-600">Dos barras verticales juntas (una fina y otra gruesa) que señalan el final absoluto de la obra musical.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practical Workshop: Place Bar Lines -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="font-bold text-lg text-navy-900 mb-1">Taller Interactivo: Delimita los Compases</h3>
+                <p class="text-xs text-slate-500 mb-4">Haz clic en los botones <strong>[ + ]</strong> para elegir y colocar el tipo correcto de línea divisoria (Simple o Doble Barra Final).</p>
+
+                <!-- Interactive Partition Canvas -->
+                <div class="bg-slate-900 rounded-xl p-4 sm:p-6 border border-slate-800 relative overflow-hidden">
+                    <svg viewBox="0 0 800 220" class="w-full h-auto select-none">
+                        <!-- Pentagram Lines -->
+                        <line x1="30" y1="40" x2="770" y2="40" stroke="#475569" stroke-width="3"/>
+                        <line x1="30" y1="75" x2="770" y2="75" stroke="#475569" stroke-width="3"/>
+                        <line x1="30" y1="110" x2="770" y2="110" stroke="#475569" stroke-width="3"/>
+                        <line x1="30" y1="145" x2="770" y2="145" stroke="#475569" stroke-width="3"/>
+                        <line x1="30" y1="180" x2="770" y2="180" stroke="#475569" stroke-width="3"/>
+
+                        <!-- Treble Clef -->
+                        <text x="75" y="169" font-size="170" font-family="'Cinzel', 'Times New Roman', serif" fill="#f59e0b" text-anchor="middle">𝄞</text>
+
+                        <!-- Measure Labels -->
+                        <text x="210" y="25" font-size="12" font-weight="bold" fill="#94a3b8" text-anchor="middle">Compás 1</text>
+                        <text x="410" y="25" font-size="12" font-weight="bold" fill="#94a3b8" text-anchor="middle">Compás 2</text>
+                        <text x="610" y="25" font-size="12" font-weight="bold" fill="#94a3b8" text-anchor="middle">Compás 3</text>
+
+                        <!-- Slot 1 (Single Bar Line required at x=310) -->
+                        <g id="bar-slot-1" class="cursor-pointer" onclick="openBarModal(1)" ontouchstart="event.preventDefault(); openBarModal(1)">
+                            <rect x="295" y="35" width="30" height="150" fill="transparent"/>
+                            <line id="bar-line-1" x1="310" y1="40" x2="310" y2="180" stroke="#f59e0b" stroke-width="4" stroke-dasharray="6" class="animate-pulse"/>
+                            <text id="bar-btn-1" x="310" y="115" font-size="22" font-weight="bold" fill="#f59e0b" text-anchor="middle">+</text>
+                        </g>
+
+                        <!-- Slot 2 (Single Bar Line required at x=510) -->
+                        <g id="bar-slot-2" class="cursor-pointer" onclick="openBarModal(2)" ontouchstart="event.preventDefault(); openBarModal(2)">
+                            <rect x="495" y="35" width="30" height="150" fill="transparent"/>
+                            <line id="bar-line-2" x1="510" y1="40" x2="510" y2="180" stroke="#f59e0b" stroke-width="4" stroke-dasharray="6" class="animate-pulse"/>
+                            <text id="bar-btn-2" x="510" y="115" font-size="22" font-weight="bold" fill="#f59e0b" text-anchor="middle">+</text>
+                        </g>
+
+                        <!-- Slot 3 (Double Final Bar required at x=710) -->
+                        <g id="bar-slot-3" class="cursor-pointer" onclick="openBarModal(3)" ontouchstart="event.preventDefault(); openBarModal(3)">
+                            <rect x="695" y="35" width="30" height="150" fill="transparent"/>
+                            <line id="bar-line-3" x1="710" y1="40" x2="710" y2="180" stroke="#f59e0b" stroke-width="4" stroke-dasharray="6" class="animate-pulse"/>
+                            <text id="bar-btn-3" x="710" y="115" font-size="22" font-weight="bold" fill="#f59e0b" text-anchor="middle">+</text>
+                        </g>
+                    </svg>
+
+                    <div id="m3-workshop-feedback" class="mt-3 text-center text-xs font-semibold text-amber-400 h-5">
+                        Selecciona cada botón [ + ] para colocar la línea o doble barra correspondiente.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between items-center">
+                <button onclick="switchTab(2)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-5 py-2.5 rounded-xl font-bold text-sm">
+                    ⏮ Volver a la Llave de Sol
+                </button>
+                <button onclick="switchTab(4)" class="bg-navy-900 hover:bg-navy-800 text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 shadow-md">
+                    Ir a la Evaluación Final ➔
+                </button>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- MÓDULO 4: EVALUACIÓN Y COMPROBANTE -->
+        <!-- ========================================== -->
+        <section id="module-4" class="tab-content space-y-6 hidden">
+            <!-- Student Information Form & Quiz Container -->
+            <div id="quiz-container" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hide-on-screenshot">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="bg-amber-100 text-amber-700 font-bold px-3 py-1 rounded-full text-xs uppercase">Evaluación Final</span>
+                    <h2 class="text-2xl font-bold text-navy-900">Cuestionario de Comprobación</h2>
+                </div>
+                <p class="text-slate-600 text-sm mb-6">
+                    Completa tus datos personales e ingresa las 5 respuestas correctas para generar tu comprobante oficial de aprobación.
+                </p>
+
+                <!-- Student Info Inputs -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div>
+                        <label class="block text-xs font-bold text-navy-900 uppercase tracking-wider mb-1">Nombre y Apellido del Estudiante *</label>
+                        <input type="text" id="student-name" placeholder="Ej: María González" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-navy-900 uppercase tracking-wider mb-1">Curso / Grado *</label>
+                        <input type="text" id="student-grade" placeholder="Ej: 5.º Básico A" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                </div>
+
+                <!-- Questions Form -->
+                <form id="quiz-form" class="space-y-6">
+                    <!-- Q1 -->
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <label class="font-bold text-navy-900 text-sm block mb-2">1. ¿Cuántas líneas y cuántos espacios tiene un pentagrama?</label>
+                        <div class="space-y-1.5 text-xs text-slate-700">
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q1" value="a" class="accent-amber-500"> a) 4 líneas y 5 espacios</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q1" value="b" class="accent-amber-500"> b) 5 líneas y 4 espacios</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q1" value="c" class="accent-amber-500"> c) 6 líneas y 5 espacios</label>
+                        </div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <label class="font-bold text-navy-900 text-sm block mb-2">2. ¿En qué dirección se deben contar SIEMPRE las líneas y espacios del pentagrama?</label>
+                        <div class="space-y-1.5 text-xs text-slate-700">
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q2" value="a" class="accent-amber-500"> a) De arriba hacia abajo</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q2" value="b" class="accent-amber-500"> b) De izquierda a derecha únicamente</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q2" value="c" class="accent-amber-500"> c) De abajo hacia arriba</label>
+                        </div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <label class="font-bold text-navy-900 text-sm block mb-2">3. ¿En cuál línea del pentagrama comienza a trazarse la Llave de Sol?</label>
+                        <div class="space-y-1.5 text-xs text-slate-700">
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q3" value="a" class="accent-amber-500"> a) En la 1.ª línea</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q3" value="b" class="accent-amber-500"> b) En la 2.ª línea</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q3" value="c" class="accent-amber-500"> c) En la 3.ª línea</label>
+                        </div>
+                    </div>
+
+                    <!-- Q4 -->
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <label class="font-bold text-navy-900 text-sm block mb-2">4. ¿Qué nombre recibe la nota ubicada exactamente en la 2.ª línea cuando hay Llave de Sol?</label>
+                        <div class="space-y-1.5 text-xs text-slate-700">
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q4" value="a" class="accent-amber-500"> a) Nota DO</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q4" value="b" class="accent-amber-500"> b) Nota MI</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q4" value="c" class="accent-amber-500"> c) Nota SOL</label>
+                        </div>
+                    </div>
+
+                    <!-- Q5 -->
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <label class="font-bold text-navy-900 text-sm block mb-2">5. ¿Qué elemento se utiliza para indicar el final definitivo de una pieza musical?</label>
+                        <div class="space-y-1.5 text-xs text-slate-700">
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q5" value="a" class="accent-amber-500"> a) Una Línea Divisoria Simple</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q5" value="b" class="accent-amber-500"> b) La Doble Barra Final</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q5" value="c" class="accent-amber-500"> c) Una nueva Llave de Sol</label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Quiz Button -->
+                    <button type="button" onclick="checkQuiz()" class="w-full bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold py-3.5 rounded-xl shadow-md transition text-sm uppercase tracking-wider">
+                        🎓 Evaluar y Generar Comprobante
+                    </button>
+                </form>
+
+                <!-- Feedback Banner for Failed Attempts (< 5/5) -->
+                <div id="quiz-error-banner" class="hidden mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-800 text-sm text-center font-medium"></div>
+            </div>
+
+            <!-- OFFICIAL CERTIFICATE CONTAINER (SCREENSHOT FRIENDLY) -->
+            <div id="certificate-section" class="hidden">
+                <div id="screenshot-wrapper" class="max-w-3xl mx-auto certificate-border p-6 sm:p-10 rounded-2xl relative shadow-2xl overflow-hidden my-4">
+                    
+                    <!-- Watermark Clef Background -->
+                    <div class="absolute right-4 bottom-2 opacity-5 pointer-events-none select-none">
+                        <span class="text-[260px] font-serif text-navy-900">𝄞</span>
+                    </div>
+
+                    <!-- Header Section -->
+                    <div class="text-center border-b border-slate-200 pb-6 mb-6">
+                        <div class="inline-block bg-navy-900 text-amber-400 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-2">
+                            Comprobante Oficial de Aprendizaje
+                        </div>
+                        <h2 class="font-serif text-2xl sm:text-3xl font-extrabold text-navy-900 uppercase tracking-wide">
+                            Notación Musical - Guía 1
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-1 font-semibold">Profesor Isaac Araya • Educación Musical</p>
+                    </div>
+
+                    <!-- Certification Statement -->
+                    <div class="text-center space-y-4 mb-8">
+                        <p class="text-xs text-slate-500 uppercase tracking-widest font-bold">Se certifica que el/la estudiante:</p>
+                        <h3 id="cert-student-name" class="text-2xl sm:text-3xl font-bold text-navy-900 underline decoration-amber-500 decoration-4 underline-offset-8">
+                            [Nombre del Estudiante]
+                        </h3>
+                        <p class="text-sm text-slate-600 font-medium">
+                            Estudiante de: <strong id="cert-student-grade" class="text-navy-900">[Curso/Grado]</strong>
+                        </p>
+                        <p class="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
+                            Ha finalizado satisfactoriamente la <strong>Guía Didáctica 1 de Notación Musical</strong>, demostrando dominio autónomo en la lectura del Pentagrama, origen de la Llave de Sol y función de las Líneas Divisorias.
+                        </p>
+                    </div>
+
+                    <!-- Performance Stats Grid -->
+                    <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-8">
+                        <div class="text-center border-r border-slate-200 pr-2">
+                            <span class="text-xs text-slate-500 font-bold block uppercase">Puntaje Obtenido</span>
+                            <span id="cert-score" class="text-xl sm:text-2xl font-extrabold text-emerald-600">5 / 5 (100%)</span>
+                            <span id="cert-status" class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full block w-max mx-auto mt-1">✓ Evaluación Aprobada</span>
+                        </div>
+                        <div class="text-left pl-2 text-xs space-y-1">
+                            <span class="text-slate-500 font-bold block uppercase mb-1">Competencias Logradas:</span>
+                            <div class="text-slate-700 font-medium">✓ Ubicación de 5 líneas y 4 espacios</div>
+                            <div class="text-slate-700 font-medium">✓ Conteo de abajo hacia arriba</div>
+                            <div class="text-slate-700 font-medium">✓ Origen de Llave de Sol en 2.ª línea</div>
+                            <div class="text-slate-700 font-medium">✓ Compases y Doble Barra Final</div>
+                        </div>
+                    </div>
+
+                    <!-- Footer Stamp & Signatures -->
+                    <div class="flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 pt-4 border-t border-slate-200 gap-4">
+                        <div>
+                            <span class="block font-bold text-navy-900">DOCENTE A CARGO</span>
+                            <span>Profesor Isaac Araya</span>
+                        </div>
+                        <div class="text-center">
+                            <span class="block font-bold text-navy-900">FECHA DE EMISIÓN</span>
+                            <span id="cert-date">--/--/----</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="block font-bold text-navy-900">CÓDIGO DE VERIFICACIÓN</span>
+                            <span id="cert-code" class="font-mono text-amber-600 font-bold">MUS-2026-XXXX</span>
+                        </div>
+                    </div>
+
+                    <!-- Validation Stamp Graphic -->
+                    <div class="mt-6 text-center">
+                        <span class="inline-flex items-center gap-1.5 bg-amber-100 border border-amber-300 text-amber-800 px-3 py-1 rounded-full text-[11px] font-bold">
+                            🛡️ VERIFICADO • GUÍA AUTÓNOMA 1 • MÚSICA
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons for Screenshot Mode & PDF Download -->
+                <div class="max-w-3xl mx-auto text-center mt-6 space-y-3 hide-on-screenshot">
+                    <div class="flex flex-wrap justify-center gap-3">
+                        <button onclick="toggleScreenshotMode(true)" class="bg-amber-500 hover:bg-amber-600 text-navy-900 font-extrabold px-6 py-3 rounded-xl text-sm shadow-lg transition inline-flex items-center gap-2">
+                            <span>📸</span> Preparar para Captura de Pantalla
+                        </button>
+                        <button onclick="downloadCertificatePDF()" id="btn-download-pdf" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl text-sm shadow-lg transition inline-flex items-center gap-2">
+                            <span>📥</span> Descargar PDF
+                        </button>
+                        <button onclick="window.print()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-3 rounded-xl text-sm transition">
+                            🖨️ Imprimir
+                        </button>
+                    </div>
+                    <p id="pdf-feedback-msg" class="hidden text-center text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl p-2.5"></p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-navy-950 text-slate-400 text-xs py-4 text-center border-t border-slate-800 hide-on-screenshot">
+        <p>Notación Musical - Guía 1 • Diseñada para aprendizaje autónomo • Profesor Isaac Araya</p>
+    </footer>
+
+    <!-- MODAL FOR MODULE 3 BAR LINE SELECTION -->
+    <div id="bar-modal" class="fixed inset-0 bg-slate-900/70 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm modal-fade">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 text-center">
+            <div class="bg-amber-100 text-amber-800 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3 font-bold text-lg">
+                🎼
+            </div>
+            <h3 class="font-bold text-navy-900 text-lg mb-1">Selecciona la Línea Divisoria</h3>
+            <p class="text-xs text-slate-500 mb-6">Elige el tipo de barra correcto para colocar en esta posición del pentagrama:</p>
+            
+            <div class="space-y-3">
+                <button onclick="selectBarType('simple')" class="w-full bg-slate-50 hover:bg-amber-50 border-2 border-slate-200 hover:border-amber-400 p-4 rounded-xl text-left transition flex items-center gap-3">
+                    <div class="w-8 h-10 border-r-4 border-navy-900"></div>
+                    <div>
+                        <strong class="text-navy-900 text-sm block">Línea Divisoria Simple</strong>
+                        <span class="text-xs text-slate-500">Separa un compás del siguiente.</span>
+                    </div>
+                </button>
+
+                <button onclick="selectBarType('double')" class="w-full bg-slate-50 hover:bg-amber-50 border-2 border-slate-200 hover:border-amber-400 p-4 rounded-xl text-left transition flex items-center gap-3">
+                    <div class="w-8 h-10 border-r-2 border-navy-900 flex justify-end">
+                        <div class="w-1.5 h-10 bg-navy-900"></div>
+                    </div>
+                    <div>
+                        <strong class="text-navy-900 text-sm block">Doble Barra Final</strong>
+                        <span class="text-xs text-slate-500">Indica la terminación del ejercicio o pieza.</span>
+                    </div>
+                </button>
+            </div>
+
+            <button onclick="closeBarModal()" class="mt-5 text-xs text-slate-400 hover:text-slate-600 font-bold">
+                Cancelar
+            </button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APP LOGIC -->
+    <script>
+        // Web Audio Synthesizer for Interactive Sound Effects
+        const AudioFX = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                // Unlocks audio context on iOS/Mobile Safari after a user gesture
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            },
+            playCorrect() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            },
+            playWrong() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            }
+        };
+
+        // Tab Navigation System
+        function switchTab(tabNum) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            const activeTab = document.getElementById(`module-${tabNum}`);
+            if (activeTab) activeTab.classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+                if (idx + 1 === tabNum) {
+                    btn.className = "tab-btn px-4 py-3 font-semibold border-b-2 border-amber-500 text-amber-400 flex items-center gap-2 whitespace-nowrap";
+                } else {
+                    btn.className = "tab-btn px-4 py-3 font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap";
+                }
+            });
+
+            document.getElementById('step-indicator').innerText = `Paso ${tabNum} de 4`;
+            document.getElementById('progress-bar').style.width = `${tabNum * 25}%`;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Module 1: Explorer & Interactive Challenge
+        let m1Score = 0;
+        let m1CurrentTarget = null;
+        const m1Targets = [
+            { type: 'line', num: 1, text: 'la 1.ª línea' },
+            { type: 'space', num: 2, text: 'el 2.º espacio' },
+            { type: 'line', num: 4, text: 'la 4.ª línea' },
+            { type: 'space', num: 3, text: 'el 3.ᵉʳ espacio' }
+        ];
+
+        function initModule1Explorer() {
+            const explorerSvg = document.getElementById('pentagram-explorer-svg');
+            const infoText = document.getElementById('explorer-text');
+
+            if (!explorerSvg) return;
+
+            explorerSvg.querySelectorAll('.svg-line, .svg-space').forEach(el => {
+                const handleHoverTouch = (e) => {
+                    const type = el.getAttribute('data-type') === 'line' ? 'línea' : 'espacio';
+                    const num = el.getAttribute('data-num');
+                    const article = type === 'línea' ? 'la' : 'el';
+                    infoText.innerText = `Te encuentras en ${article} ${num}.ª ${type} del pentagrama.`;
+                };
+                el.addEventListener('mouseenter', handleHoverTouch);
+                el.addEventListener('touchstart', handleHoverTouch, {passive: true});
+            });
+
+            const gameSvg = document.getElementById('pentagram-game-svg');
+            if (gameSvg) {
+                gameSvg.querySelectorAll('.game-element').forEach(el => {
+                    const handleGameInteract = (e) => {
+                        // Prevent simulated dual clicks on mobile devices
+                        if (e.type === 'touchstart') {
+                            e.preventDefault(); 
+                        }
+                        const type = el.getAttribute('data-type');
+                        const num = parseInt(el.getAttribute('data-num'));
+                        checkM1Answer(type, num);
+                    };
+                    el.addEventListener('click', handleGameInteract);
+                    el.addEventListener('touchstart', handleGameInteract, {passive: false});
+                });
+            }
+
+            resetModule1Challenge();
+        }
+
+        function resetModule1Challenge() {
+            m1Score = 0;
+            document.getElementById('m1-score').innerText = m1Score;
+            document.getElementById('m1-feedback').innerText = '';
+            setM1Target();
+        }
+
+        function setM1Target() {
+            if (m1Score >= m1Targets.length) {
+                document.getElementById('m1-target-prompt').innerText = '🎉 ¡Felicitaciones! Has completado el desafío.';
+                document.getElementById('m1-feedback').className = 'mt-3 text-center text-sm font-semibold text-emerald-600';
+                document.getElementById('m1-feedback').innerText = 'Dominas la identificación de líneas y espacios.';
+                AudioFX.playCorrect();
+                return;
+            }
+            m1CurrentTarget = m1Targets[m1Score];
+            document.getElementById('m1-target-prompt').innerText = `Haz clic en ${m1CurrentTarget.text}`;
+        }
+
+        function checkM1Answer(type, num) {
+            if (m1Score >= m1Targets.length) return;
+
+            const feedback = document.getElementById('m1-feedback');
+            if (type === m1CurrentTarget.type && num === m1CurrentTarget.num) {
+                m1Score++;
+                document.getElementById('m1-score').innerText = m1Score;
+                feedback.className = 'mt-3 text-center text-sm font-semibold text-emerald-600';
+                feedback.innerText = '¡Correcto! Excelente identificación.';
+                AudioFX.playCorrect();
+                setM1Target();
+            } else {
+                feedback.className = 'mt-3 text-center text-sm font-semibold text-red-500';
+                feedback.innerText = 'Incorrecto. Recuerda contar las líneas y espacios de abajo hacia arriba.';
+                AudioFX.playWrong();
+            }
+        }
+
+        // Module 2: Treble Clef Visualizer
+        function setClefStep(step) {
+            const dot = document.getElementById('clef-start-dot');
+            const clefGroup = document.getElementById('clef-vector-group');
+            const solGroup = document.getElementById('note-sol-group');
+            const expBox = document.getElementById('clef-explanation-box');
+
+            document.querySelectorAll('.clef-step-btn').forEach((btn, idx) => {
+                if (idx + 1 === step) {
+                    btn.className = 'clef-step-btn px-4 py-2 rounded-lg text-xs font-bold bg-amber-500 text-navy-900 shadow';
+                } else {
+                    btn.className = 'clef-step-btn px-4 py-2 rounded-lg text-xs font-bold bg-slate-200 text-slate-700 hover:bg-slate-300';
+                }
+            });
+
+            if (step === 1) {
+                dot.setAttribute('r', '10');
+                clefGroup.style.opacity = '0.3';
+                solGroup.classList.add('hidden');
+                expBox.innerHTML = '📍 <strong>Paso 1:</strong> La Llave de Sol comienza obligatoriamente con un punto sobre la <strong>segunda línea</strong>.';
+            } else if (step === 2) {
+                dot.setAttribute('r', '8');
+                clefGroup.style.opacity = '1.0';
+                solGroup.classList.add('hidden');
+                expBox.innerHTML = '🌀 <strong>Paso 2:</strong> Su espiral envuelve la 2.ª línea, sube en bucle por el pentagrama y desciende en recta.';
+            } else if (step === 3) {
+                dot.setAttribute('r', '8');
+                clefGroup.style.opacity = '1.0';
+                solGroup.classList.remove('hidden');
+                expBox.innerHTML = '🎵 <strong>Paso 3:</strong> Al nacer en la 2.ª línea, la Llave de Sol la bautiza oficialmente con el nombre de <strong>nota SOL</strong>.';
+            }
+        }
+
+        function checkClefOrigin(lineNum) {
+            const feedback = document.getElementById('clef-check-feedback');
+            if (lineNum === 2) {
+                feedback.className = 'mt-3 text-sm font-semibold text-emerald-600';
+                feedback.innerText = '¡Correcto! Nace en la 2.ª línea y le da el nombre a la nota SOL.';
+                AudioFX.playCorrect();
+            } else {
+                feedback.className = 'mt-3 text-sm font-semibold text-red-500';
+                feedback.innerText = 'Incorrecto. Revisa el visualizador: nace exactamente en la 2.ª línea.';
+                AudioFX.playWrong();
+            }
+        }
+
+        // Module 3: Bar Lines Workshop Modal
+        let activeSlotIndex = null;
+        const slotState = { 1: false, 2: false, 3: false };
+
+        function openBarModal(slotIndex) {
+            activeSlotIndex = slotIndex;
+            document.getElementById('bar-modal').classList.remove('hidden');
+        }
+
+        function closeBarModal() {
+            document.getElementById('bar-modal').classList.add('hidden');
+            activeSlotIndex = null;
+        }
+
+        function selectBarType(type) {
+            if (!activeSlotIndex) return;
+
+            const feedback = document.getElementById('m3-workshop-feedback');
+            const isLastSlot = activeSlotIndex === 3;
+
+            if ((!isLastSlot && type === 'simple') || (isLastSlot && type === 'double')) {
+                slotState[activeSlotIndex] = true;
+                updateBarSlotSVG(activeSlotIndex, type);
+                closeBarModal();
+                AudioFX.playCorrect();
+
+                if (slotState[1] && slotState[2] && slotState[3]) {
+                    feedback.innerText = '🎉 ¡Excelente! Has organizado 3 compases y cerrado con la Doble Barra Final.';
+                    feedback.className = 'mt-3 text-center text-xs font-bold text-emerald-400 h-5';
+                } else {
+                    feedback.innerText = '¡Barra correcta! Continúa con las siguientes.';
+                    feedback.className = 'mt-3 text-center text-xs font-bold text-emerald-400 h-5';
+                }
+            } else {
+                closeBarModal();
+                AudioFX.playWrong();
+                feedback.innerText = isLastSlot 
+                    ? '⚠️ Para cerrar la obra musical se requiere la Doble Barra Final.' 
+                    : '⚠️ Para separar compases intermedios se requiere una Línea Divisoria Simple.';
+                feedback.className = 'mt-3 text-center text-xs font-bold text-red-400 h-5';
+            }
+        }
+
+        function updateBarSlotSVG(slotIndex, type) {
+            const lineEl = document.getElementById(`bar-line-${slotIndex}`);
+            const btnEl = document.getElementById(`bar-btn-${slotIndex}`);
+
+            if (type === 'simple') {
+                lineEl.setAttribute('stroke-dasharray', 'none');
+                lineEl.setAttribute('stroke-width', '4');
+                lineEl.classList.remove('animate-pulse');
+                btnEl.style.display = 'none';
+            } else if (type === 'double') {
+                const parentGroup = document.getElementById(`bar-slot-${slotIndex}`);
+                parentGroup.innerHTML = `
+                    <line x1="705" y1="40" x2="705" y2="180" stroke="#f59e0b" stroke-width="2"/>
+                    <line x1="713" y1="40" x2="713" y2="180" stroke="#f59e0b" stroke-width="6"/>
+                `;
+            }
+        }
+
+        // Module 4: Quiz Evaluation & Certificate Logic
+        let lastGeneratedCode = 'MUS-2026-XXXX';
+        let lastGeneratedDate = '';
+
+        function checkQuiz() {
+            const name = document.getElementById('student-name').value.trim();
+            const grade = document.getElementById('student-grade').value.trim();
+            const errBanner = document.getElementById('quiz-error-banner');
+
+            if (!name || !grade) {
+                errBanner.classList.remove('hidden');
+                errBanner.innerText = 'Por favor ingresa tu Nombre, Apellido y Curso para poder emitir el comprobante.';
+                AudioFX.playWrong();
+                return;
+            }
+
+            const answers = {
+                q1: document.querySelector('input[name="q1"]:checked')?.value,
+                q2: document.querySelector('input[name="q2"]:checked')?.value,
+                q3: document.querySelector('input[name="q3"]:checked')?.value,
+                q4: document.querySelector('input[name="q4"]:checked')?.value,
+                q5: document.querySelector('input[name="q5"]:checked')?.value,
+            };
+
+            const correctKey = { q1: 'b', q2: 'c', q3: 'b', q4: 'c', q5: 'b' };
+            let score = 0;
+
+            for (let q in correctKey) {
+                if (answers[q] === correctKey[q]) score++;
+            }
+
+            if (score < 5) {
+                errBanner.classList.remove('hidden');
+                errBanner.innerHTML = `⚠️ Has obtenido <strong>${score} de 5 aciertos (${score * 20}%)</strong>.<br>Para obtener el comprobante de aprobación debes responder correctamente las 5 preguntas (100%). Repasa los módulos e inténtalo nuevamente.`;
+                AudioFX.playWrong();
+            } else {
+                errBanner.classList.add('hidden');
+                document.getElementById('quiz-container').classList.add('hidden');
+                document.getElementById('certificate-section').classList.remove('hidden');
+
+                document.getElementById('cert-student-name').innerText = name;
+                document.getElementById('cert-student-grade').innerText = grade;
+                
+                const today = new Date();
+                lastGeneratedDate = today.toLocaleDateString('es-ES', {
+                    day: '2-digit', month: 'long', year: 'numeric'
+                });
+                document.getElementById('cert-date').innerText = lastGeneratedDate;
+
+                lastGeneratedCode = 'MUS-2026-' + Math.random().toString(36).substring(2, 7).toUpperCase();
+                document.getElementById('cert-code').innerText = lastGeneratedCode;
+
+                AudioFX.playCorrect();
+                window.scrollTo({ top: document.getElementById('certificate-section').offsetTop - 20, behavior: 'smooth' });
+            }
+        }
+
+        // Toggle Screenshot Optimization Mode
+        function toggleScreenshotMode(enable) {
+            const banner = document.getElementById('screenshot-banner');
+            if (enable) {
+                document.body.classList.add('screenshot-active');
+                banner.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                document.body.classList.remove('screenshot-active');
+                banner.classList.add('hidden');
+            }
+        }
+
+        // Native PDF Certificate Generator via jsPDF (works reliably inside iframes)
+        function downloadCertificatePDF() {
+            const btn = document.getElementById('btn-download-pdf');
+            const msg = document.getElementById('pdf-feedback-msg');
+            const studentName = document.getElementById('student-name').value.trim() || 'Estudiante';
+            const studentGrade = document.getElementById('student-grade').value.trim() || 'Curso';
+            const safeName = studentName.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]/g, '_');
+
+            if (!window.jspdf || !window.jspdf.jsPDF) {
+                msg.classList.remove('hidden', 'text-emerald-700', 'bg-emerald-50', 'border-emerald-200');
+                msg.classList.add('text-amber-800', 'bg-amber-50', 'border-amber-200');
+                msg.textContent = 'ℹ️ Usa el botón "📸 Preparar para Captura de Pantalla" y toma una captura completa.';
+                return;
+            }
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<span>⏳</span> Generando PDF...';
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'letter'
+                });
+
+                const pageW = doc.internal.pageSize.getWidth(); // 215.9 mm
+                const centerX = pageW / 2;
+
+                // Fondo blanco limpio
+                doc.setFillColor(255, 255, 255);
+                doc.rect(0, 0, pageW, 279.4, 'F');
+
+                // Marco exterior Azul Marino (#0f172a)
+                doc.setDrawColor(15, 23, 42);
+                doc.setLineWidth(3.5);
+                doc.roundedRect(14, 14, pageW - 28, 251, 5, 5, 'S');
+
+                // Marco interior Dorado (#d97706)
+                doc.setDrawColor(217, 119, 6);
+                doc.setLineWidth(1.2);
+                doc.roundedRect(18, 18, pageW - 36, 243, 3, 3, 'S');
+
+                // Etiqueta superior
+                doc.setFillColor(15, 23, 42);
+                doc.roundedRect(centerX - 46, 28, 92, 8, 4, 4, 'F');
+                doc.setTextColor(251, 191, 36);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(8.5);
+                doc.text('COMPROBANTE OFICIAL DE APRENDIZAJE', centerX, 33.3, { align: 'center' });
+
+                // Título Principal
+                doc.setTextColor(15, 23, 42);
+                doc.setFont('times', 'bold');
+                doc.setFontSize(22);
+                doc.text('NOTACIÓN MUSICAL - GUÍA 1', centerX, 48, { align: 'center' });
+
+                // Subtítulo
+                doc.setTextColor(100, 116, 139);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(10);
+                doc.text('Pentagrama, Llave de Sol y Líneas Divisorias  •  Profesor Isaac Araya', centerX, 55, { align: 'center' });
+
+                // Línea separadora
+                doc.setDrawColor(226, 232, 240);
+                doc.setLineWidth(0.5);
+                doc.line(30, 62, pageW - 30, 62);
+
+                // Certificación
+                doc.setTextColor(100, 116, 139);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(9.5);
+                doc.text('SE CERTIFICA QUE EL/LA ESTUDIANTE:', centerX, 76, { align: 'center' });
+
+                // Nombre del Estudiante
+                doc.setTextColor(15, 23, 42);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(20);
+                doc.text(studentName, centerX, 89, { align: 'center' });
+
+                // Subrayado dorado bajo el nombre
+                const nameWidth = Math.min(doc.getTextWidth(studentName) + 14, 150);
+                doc.setDrawColor(245, 158, 11);
+                doc.setLineWidth(1.3);
+                doc.line(centerX - nameWidth / 2, 92.5, centerX + nameWidth / 2, 92.5);
+
+                // Curso / Grado
+                doc.setTextColor(71, 85, 105);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(11.5);
+                doc.text(`Estudiante de: ${studentGrade}`, centerX, 103, { align: 'center' });
+
+                // Párrafo descriptivo
+                doc.setTextColor(71, 85, 105);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(10.5);
+                const descLines = doc.splitTextToSize(
+                    'Ha finalizado satisfactoriamente la Guía Didáctica 1 de Notación Musical, demostrando dominio autónomo en la lectura del Pentagrama, origen de la Llave de Sol y función de las Líneas Divisorias.',
+                    155
+                );
+                doc.text(descLines, centerX, 116, { align: 'center' });
+
+                // Caja de Puntaje y Competencias
+                doc.setFillColor(248, 250, 252);
+                doc.setDrawColor(203, 213, 225);
+                doc.setLineWidth(0.5);
+                doc.roundedRect(26, 136, pageW - 52, 54, 3, 3, 'FD');
+
+                // Línea divisoria vertical interna
+                doc.line(95, 142, 95, 184);
+
+                // Columna Izquierda: Puntaje
+                doc.setTextColor(100, 116, 139);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(8.5);
+                doc.text('PUNTAJE OBTENIDO', 60.5, 149, { align: 'center' });
+
+                doc.setTextColor(5, 150, 105);
+                doc.setFontSize(18);
+                doc.text('5 / 5 (100%)', 60.5, 161, { align: 'center' });
+
+                doc.setFillColor(209, 250, 229);
+                doc.roundedRect(38, 166, 45, 7, 3.5, 3.5, 'F');
+                doc.setTextColor(6, 95, 70);
+                doc.setFontSize(8);
+                doc.text('EVALUACIÓN APROBADA', 60.5, 170.7, { align: 'center' });
+
+                // Columna Derecha: Competencias Logradas
+                doc.setTextColor(100, 116, 139);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(8.5);
+                doc.text('COMPETENCIAS LOGRADAS:', 102, 149);
+
+                doc.setTextColor(51, 65, 85);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(9);
+                doc.text('• Ubicación de 5 líneas y 4 espacios', 102, 157);
+                doc.text('• Conteo de abajo hacia arriba', 102, 164);
+                doc.text('• Origen de Llave de Sol en 2.ª línea', 102, 171);
+                doc.text('• Compases y Doble Barra Final', 102, 178);
+
+                // Línea separadora inferior
+                doc.setDrawColor(226, 232, 240);
+                doc.line(30, 204, pageW - 30, 204);
+
+                // Datos de Firma, Fecha y Código
+                doc.setTextColor(15, 23, 42);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(8.5);
+                doc.text('DOCENTE A CARGO', 32, 214);
+                doc.text('FECHA DE EMISIÓN', centerX, 214, { align: 'center' });
+                doc.text('CÓDIGO DE VERIFICACIÓN', pageW - 32, 214, { align: 'right' });
+
+                doc.setTextColor(71, 85, 105);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(9.5);
+                doc.text('Profesor Isaac Araya', 32, 220);
+                doc.text(lastGeneratedDate || new Date().toLocaleDateString('es-ES'), centerX, 220, { align: 'center' });
+
+                doc.setTextColor(217, 119, 6);
+                doc.setFont('courier', 'bold');
+                doc.setFontSize(10);
+                doc.text(lastGeneratedCode, pageW - 32, 220, { align: 'right' });
+
+                // Sello inferior
+                doc.setFillColor(254, 243, 199);
+                doc.setDrawColor(252, 211, 77);
+                doc.roundedRect(centerX - 48, 233, 96, 9, 4.5, 4.5, 'FD');
+                doc.setTextColor(146, 64, 14);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(8.5);
+                doc.text('VERIFICADO  •  GUÍA AUTÓNOMA 1  •  MÚSICA', centerX, 238.8, { align: 'center' });
+
+                // Guardar PDF
+                doc.save(`Comprobante_Guia1_${safeName}.pdf`);
+
+                btn.disabled = false;
+                btn.innerHTML = '<span>📥</span> Descargar PDF';
+                msg.classList.remove('hidden', 'text-amber-800', 'bg-amber-50', 'border-amber-200');
+                msg.classList.add('text-emerald-700', 'bg-emerald-50', 'border-emerald-200');
+                msg.textContent = '✅ ¡PDF completo generado y descargado!';
+            } catch (err) {
+                btn.disabled = false;
+                btn.innerHTML = '<span>📥</span> Descargar PDF';
+                msg.classList.remove('hidden', 'text-emerald-700', 'bg-emerald-50', 'border-emerald-200');
+                msg.classList.add('text-amber-800', 'bg-amber-50', 'border-amber-200');
+                msg.textContent = 'ℹ️ Si la descarga fue bloqueada en la vista previa, pulsa "📸 Preparar para Captura de Pantalla" y toma una captura.';
+            }
+        }
+
+        // Initialize App on DOM ready
+        window.onload = function() {
+            initModule1Explorer();
+        };
+    </script>
+</body>
+</html>

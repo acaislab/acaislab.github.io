@@ -44,17 +44,6 @@ body {
   background-image: 
     radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.05), transparent 25%),
     radial-gradient(circle at 85% 30%, rgba(0, 229, 255, 0.05), transparent 25%);
-  background-attachment: fixed;
-}
-
-/* Ko-Fi Widget Customization */
-div[id^="kofi-widget-overlay"],
-.floatingchat-container-wrap {
-  transform: scale(0.85) !important;
-  transform-origin: bottom left !important;
-  bottom: 190px !important;
-  left: 16px !important;
-  z-index: 40 !important;
 }
 
 /* Custom Subtle Scrollbar */

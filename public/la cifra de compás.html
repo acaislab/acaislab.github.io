@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notación Musical - Guía 2 Profesor Isaac Araya</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- jsPDF para generación nativa e infalible del Certificado en PDF (1 página exacta sin recortes) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#0b132b',
+                        },
+                        amber: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Cinzel', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        button, a, input, .cursor-pointer {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Diseño del Certificado Oficial */
+        .certificate-border {
+            border: 12px solid #0f172a;
+            outline: 4px solid #d97706;
+            outline-offset: -8px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        /* Modo Captura de Pantalla Limpia */
+        body.screenshot-active {
+            background: #0f172a !important;
+        }
+        body.screenshot-active .hide-on-screenshot {
+            display: none !important;
+        }
+        body.screenshot-active #certificate-section {
+            display: block !important;
+            padding: 0 !important;
+            margin: 0 auto !important;
+        }
+        body.screenshot-active #screenshot-wrapper {
+            box-shadow: 0 0 50px rgba(245, 158, 11, 0.35);
+            margin: 1rem auto !important;
+        }
+
+        /* Estilos de Impresión limpios */
+        @media print {
+            header, footer, .hide-on-screenshot, #quiz-container, #screenshot-banner, .tab-content:not(#module-4) {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            main {
+                max-width: 100% !important;
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            #module-4, #certificate-section {
+                display: block !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            #screenshot-wrapper {
+                box-shadow: none !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 auto !important;
+                page-break-inside: avoid !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-white">
+
+    <!-- ENCABEZADO OFICIAL -->
+    <header class="bg-navy-900 text-white shadow-md sticky top-0 z-40 hide-on-screenshot">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-500 p-2.5 rounded-xl text-navy-900 font-bold shadow-md">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg sm:text-xl leading-tight tracking-wide text-white">Notación Musical - Guía 2 Profesor Isaac Araya</h1>
+                    <p class="text-xs text-amber-400 font-medium">Cifra Indicadora de Compás (2/4, 3/4, 4/4)</p>
+                </div>
+            </div>
+
+            <!-- Barra de Progreso -->
+            <div class="w-full md:w-auto flex flex-col items-end gap-1">
+                <div class="flex space-x-1 text-xs font-semibold text-slate-300">
+                    <span id="step-indicator">Paso 1 de 4</span>
+                </div>
+                <div class="w-full md:w-64 bg-navy-800 h-2.5 rounded-full overflow-hidden border border-slate-700">
+                    <div id="progress-bar" class="bg-amber-500 h-full w-1/4 transition-all duration-300"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pestañas de Navegación -->
+        <div class="bg-navy-950 border-t border-slate-800">
+            <div class="max-w-6xl mx-auto flex overflow-x-auto text-xs sm:text-sm">
+                <button onclick="switchTab(1)" id="tab-btn-1" class="tab-btn px-4 py-3 font-semibold border-b-2 border-amber-500 text-amber-400 flex items-center gap-2 whitespace-nowrap">
+                    <span>1.</span> ¿Qué es la Cifra Indicadora?
+                </button>
+                <button onclick="switchTab(2)" id="tab-btn-2" class="tab-btn px-4 py-3 font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
+                    <span>2.</span> Compás de 2/4, 3/4 y 4/4
+                </button>
+                <button onclick="switchTab(3)" id="tab-btn-3" class="tab-btn px-4 py-3 font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
+                    <span>3.</span> Taller Práctico
+                </button>
+                <button onclick="switchTab(4)" id="tab-btn-4" class="tab-btn px-4 py-3 font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
+                    <span>4.</span> Evaluación y Comprobante
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="max-w-5xl mx-auto w-full px-4 py-6 flex-grow">
+
+        <!-- Banner Modo Captura de Pantalla -->
+        <div id="screenshot-banner" class="hidden bg-amber-500 text-navy-900 font-bold p-4 rounded-xl mb-6 text-center shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">📸</span>
+                <div class="text-left">
+                    <p class="text-sm uppercase tracking-wider font-extrabold">Vista Limpia de Comprobante</p>
+                    <p class="text-xs font-normal">Toma una captura de pantalla completa y envíala a tu profesor/a jefe y a iarayai@eduhuechuraba.cl</p>
+                </div>
+            </div>
+            <button onclick="toggleScreenshotMode(false)" class="bg-navy-900 text-white px-4 py-2 rounded-lg text-xs hover:bg-navy-800 transition">
+                ✕ Volver a la Guía
+            </button>
+        </div>
+
+        <!-- ============================================================= -->
+        <!-- MÓDULO 1: ¿QUÉ ES LA CIFRA INDICADORA? -->
+        <!-- ============================================================= -->
+        <section id="module-1" class="tab-content space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="bg-amber-100 text-amber-700 font-bold px-3 py-1 rounded-full text-xs uppercase">Módulo 1</span>
+                    <h2 class="text-2xl font-bold text-navy-900">¿Qué es la Cifra Indicadora de Compás?</h2>
+                </div>
+                <p class="text-slate-600 leading-relaxed mb-5">
+                    La <strong>Cifra Indicadora</strong> son dos números colocados uno encima del otro al inicio de la partitura, inmediatamente después de la <strong>Llave de Sol</strong>. Su función es determinar cuántos tiempos caben en cada compás y qué figura musical equivale a un tiempo.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-50 p-5 rounded-xl border-l-4 border-amber-500">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="bg-amber-500 text-navy-900 font-extrabold w-7 h-7 rounded-lg flex items-center justify-center text-sm">↑</span>
+                            <h3 class="font-bold text-navy-900 text-base">Número Superior (Numerador)</h3>
+                        </div>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Indica la <strong>cantidad de tiempos</strong> que entran en cada compás. Por ejemplo, si es un <strong>2</strong>, caben 2 tiempos; si es un <strong>3</strong>, caben 3 tiempos; si es un <strong>4</strong>, caben 4 tiempos.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 p-5 rounded-xl border-l-4 border-navy-900">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="bg-navy-900 text-amber-400 font-extrabold w-7 h-7 rounded-lg flex items-center justify-center text-sm">↓</span>
+                            <h3 class="font-bold text-navy-900 text-base">Número Inferior (Denominador)</h3>
+                        </div>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Indica la <strong>figura musical que vale 1 tiempo</strong>. En esta guía trabajaremos con el número <strong>4</strong> abajo, el cual representa siempre a la figura de <strong>Negra (♩ = 1 tiempo)</strong>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Laboratorio Interactivo del Módulo 1 -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-navy-900">Explorador Interactivo de la Cifra Indicadora</h3>
+                        <p class="text-xs text-slate-500">Cambia el número superior y escucha cómo se agrupan los pulsos de Negra en el pentagrama.</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="setM1Numerator(2)" id="m1-btn-2" class="m1-num-btn px-3.5 py-2 rounded-lg text-xs font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition">2 / 4</button>
+                        <button onclick="setM1Numerator(3)" id="m1-btn-3" class="m1-num-btn px-3.5 py-2 rounded-lg text-xs font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition">3 / 4</button>
+                        <button onclick="setM1Numerator(4)" id="m1-btn-4" class="m1-num-btn px-3.5 py-2 rounded-lg text-xs font-bold bg-amber-500 text-navy-900 shadow transition">4 / 4</button>
+                    </div>
+                </div>
+
+                <!-- Pentagrama SVG Alineado -->
+                <div class="bg-slate-900 rounded-xl p-5 border border-slate-800 overflow-hidden">
+                    <svg viewBox="0 0 760 210" class="w-full max-w-3xl mx-auto h-auto select-none">
+                        <!-- 5 Líneas del Pentagrama (y = 40, 75, 110, 145, 180) -->
+                        <line x1="30" y1="40" x2="730" y2="40" stroke="#475569" stroke-width="3"/>
+                        <line x1="30" y1="75" x2="730" y2="75" stroke="#475569" stroke-width="3"/>
+                        <line x1="30" y1="110" x2="730" y2="110" stroke="#475569" stroke-width="3"/>
+                        <line x1="30" y1="145" x2="730" y2="145" stroke="#475569" stroke-width="3"/>
+                        <line x1="30" y1="180" x2="730" y2="180" stroke="#475569" stroke-width="3"/>
+
+                        <!-- Llave de Sol alineada a 2ª línea (y=145) -->
+                        <text x="75" y="169" font-size="170" font-family="'Cinzel', 'Times New Roman', serif" fill="#f59e0b" text-anchor="middle">𝄞</text>
+
+                        <!-- Cifra Indicadora SVG -->
+                        <text id="m1-svg-num" x="145" y="103" font-size="68" font-weight="800" font-family="'Inter', sans-serif" fill="#ffffff" text-anchor="middle">4</text>
+                        <text x="145" y="173" font-size="68" font-weight="800" font-family="'Inter', sans-serif" fill="#fbbf24" text-anchor="middle">4</text>
+
+                        <!-- Grupo de Notas (Negras en nota SOL - 2ª línea y=145) -->
+                        <g id="m1-notes-group"></g>
+                    </svg>
+
+                    <div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 bg-navy-800/90 p-3.5 rounded-xl border border-slate-700">
+                        <p id="m1-explanation" class="text-xs sm:text-sm text-slate-200">
+                            En <strong>4/4</strong> entran exactamente <strong>4 tiempos de Negra</strong> antes de colocar la línea divisoria.
+                        </p>
+                        <button onclick="playM1Pulse()" class="bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold px-4 py-2 rounded-lg text-xs shrink-0 flex items-center gap-1.5 shadow transition">
+                            <span>🔊</span> Escuchar Pulso
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button onclick="switchTab(2)" class="bg-navy-900 hover:bg-navy-800 text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 shadow-md transition">
+                    Siguiente Módulo: 2/4, 3/4 y 4/4 ➔
+                </button>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- MÓDULO 2: COMPÁS DE 2/4, 3/4 Y 4/4 -->
+        <!-- ============================================================= -->
+        <section id="module-2" class="tab-content space-y-6 hidden">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="bg-amber-100 text-amber-700 font-bold px-3 py-1 rounded-full text-xs uppercase">Módulo 2</span>
+                    <h2 class="text-2xl font-bold text-navy-900">Compases Simples: 2/4, 3/4 y 4/4</h2>
+                </div>
+                <p class="text-slate-600 text-sm leading-relaxed mb-5">
+                    Cada cifra indicadora organiza los tiempos con una acentuación característica y permite combinar distintas figuras rítmicas siempre que la suma total respete el número superior del compás.
+                </p>
+
+                <!-- Tarjetas Comparativas -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- 2/4 -->
+                    <div onclick="selectM2Meter('2/4')" id="m2-card-2/4" class="m2-card cursor-pointer p-4 rounded-xl border-2 border-amber-500 bg-amber-50/40 transition">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-2xl font-extrabold text-navy-900">2/4</span>
+                            <span class="text-[11px] font-bold bg-amber-500 text-navy-900 px-2.5 py-0.5 rounded-full">Compás Binario</span>
+                        </div>
+                        <p class="text-xs text-slate-600 mb-2"><strong>2 tiempos de Negra</strong> por compás. Acentuación: <em>Fuerte - Débil</em> (1 - 2).</p>
+                        <p class="text-[11px] text-slate-500 font-medium">Ejemplo: Marchas, polkas, country.</p>
+                    </div>
+
+                    <!-- 3/4 -->
+                    <div onclick="selectM2Meter('3/4')" id="m2-card-3/4" class="m2-card cursor-pointer p-4 rounded-xl border-2 border-slate-200 bg-slate-50 hover:border-slate-300 transition">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-2xl font-extrabold text-navy-900">3/4</span>
+                            <span class="text-[11px] font-bold bg-slate-200 text-slate-700 px-2.5 py-0.5 rounded-full">Compás Ternario</span>
+                        </div>
+                        <p class="text-xs text-slate-600 mb-2"><strong>3 tiempos de Negra</strong> por compás. Acentuación: <em>Fuerte - Débil - Débil</em> (1 - 2 - 3).</p>
+                        <p class="text-[11px] text-slate-500 font-medium">Ejemplo: Vals, minueto, tonadas lentas.</p>
+                    </div>
+
+                    <!-- 4/4 -->
+                    <div onclick="selectM2Meter('4/4')" id="m2-card-4/4" class="m2-card cursor-pointer p-4 rounded-xl border-2 border-slate-200 bg-slate-50 hover:border-slate-300 transition">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-2xl font-extrabold text-navy-900">4/4</span>
+                            <span class="text-[11px] font-bold bg-slate-200 text-slate-700 px-2.5 py-0.5 rounded-full">Compás Cuaternario</span>
+                        </div>
+                        <p class="text-xs text-slate-600 mb-2"><strong>4 tiempos de Negra</strong> por compás. Acentuación: <em>Fuerte - Débil - Semifuerte - Débil</em>.</p>
+                        <p class="text-[11px] text-slate-500 font-medium">Ejemplo: Pop, rock, baladas, música clásica.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visor Musical de Ejemplo con Figuras Variadas -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-navy-900">Partitura de Ejemplo: <span id="m2-active-title" class="text-amber-600">Compás de 2/4</span></h3>
+                        <p class="text-xs text-slate-500">Observa cómo distintas figuras (Negras, Corcheas, Blancas, Redondas) completan exactamente cada compás.</p>
+                    </div>
+                    <button onclick="playM2Example()" class="bg-navy-900 hover:bg-navy-800 text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow transition">
+                        <span>▶️</span> Escuchar Partitura de Ejemplo
+                    </button>
+                </div>
+
+                <!-- Recordatorio rápido de valores -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4 text-center text-xs">
+                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                        <strong class="text-navy-900 block">♩ Negra</strong>
+                        <span class="text-slate-500">Vale 1 tiempo</span>
+                    </div>
+                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                        <strong class="text-navy-900 block">♫ Par de Corcheas</strong>
+                        <span class="text-slate-500">Valen 1 tiempo (½ + ½)</span>
+                    </div>
+                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                        <strong class="text-navy-900 block">𝅗𝅥 Blanca</strong>
+                        <span class="text-slate-500">Vale 2 tiempos</span>
+                    </div>
+                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                        <strong class="text-navy-900 block">𝅝 Redonda</strong>
+                        <span class="text-slate-500">Vale 4 tiempos</span>
+                    </div>
+                </div>
+
+                <!-- Pentagrama SVG de Ejemplos -->
+                <div class="bg-slate-900 rounded-xl p-5 border border-slate-800 overflow-hidden">
+                    <svg id="m2-score-svg" viewBox="0 0 800 215" class="w-full h-auto select-none">
+                        <!-- 5 Líneas -->
+                        <line x1="30" y1="40" x2="770" y2="40" stroke="#475569" stroke-width="3"/>
+                        <line x1="30" y1="75" x2="770" y2="75" stroke="#475569" stroke-width="3"/>
+                        <line x1="30" y1="110" x2="770" y2="110" stroke="#475569" stroke-width="3"/>
+                        <line x1="30" y1="145" x2="770" y2="145" stroke="#475569" stroke-width="3"/>
+                        <line x1="30" y1="180" x2="770" y2="180" stroke="#475569" stroke-width="3"/>
+
+                        <!-- Llave de Sol -->
+                        <text x="70" y="169" font-size="170" font-family="'Cinzel', 'Times New Roman', serif" fill="#f59e0b" text-anchor="middle">𝄞</text>
+
+                        <!-- Cifra Indicadora -->
+                        <text id="m2-svg-num" x="135" y="103" font-size="68" font-weight="800" font-family="'Inter', sans-serif" fill="#ffffff" text-anchor="middle">2</text>
+                        <text x="135" y="173" font-size="68" font-weight="800" font-family="'Inter', sans-serif" fill="#fbbf24" text-anchor="middle">4</text>
+
+                        <!-- Contenedor dinámico de compases -->
+                        <g id="m2-dynamic-measures"></g>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center">
+                <button onclick="switchTab(1)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-5 py-2.5 rounded-xl font-bold text-sm">
+                    ⏮ Volver al Módulo 1
+                </button>
+                <button onclick="switchTab(3)" class="bg-navy-900 hover:bg-navy-800 text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 shadow-md">
+                    Siguiente Módulo: Taller Práctico ➔
+                </button>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- MÓDULO 3: TALLER PRÁCTICO INTERACTIVO -->
+        <!-- ============================================================= -->
+        <section id="module-3" class="tab-content space-y-6 hidden">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                    <div>
+                        <span class="bg-amber-100 text-amber-700 font-bold px-3 py-1 rounded-full text-xs uppercase">Módulo 3</span>
+                        <h2 class="text-2xl font-bold text-navy-900 mt-1">Taller Práctico: Completa los Compases</h2>
+                        <p class="text-xs text-slate-500 mt-1">Elige una cifra indicadora y selecciona figuras musicales para completar exactamente 2 compases.</p>
+                    </div>
+                    <button onclick="resetM3Workshop()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                        🔄 Reiniciar Taller
+                    </button>
+                </div>
+
+                <!-- Selector de Cifra para el Taller -->
+                <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-5">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-navy-900 uppercase">1. Elige la Cifra:</span>
+                        <button onclick="setM3Meter('2/4')" id="m3-meter-2/4" class="m3-meter-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-navy-900 shadow">2/4</button>
+                        <button onclick="setM3Meter('3/4')" id="m3-meter-3/4" class="m3-meter-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100">3/4</button>
+                        <button onclick="setM3Meter('4/4')" id="m3-meter-4/4" class="m3-meter-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100">4/4</button>
+                    </div>
+
+                    <div class="text-xs font-semibold text-slate-600">
+                        Capacidad por compás: <span id="m3-capacity-badge" class="bg-navy-900 text-amber-400 px-2.5 py-1 rounded-md font-bold ml-1">2 tiempos</span>
+                    </div>
+                </div>
+
+                <!-- Paleta de Figuras Musicales -->
+                <div class="mb-5">
+                    <span class="text-xs font-bold text-navy-900 uppercase block mb-2">2. Haz clic en una figura para agregarla al compás actual:</span>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <button onclick="addM3Note('quarter', 1)" class="bg-white hover:bg-amber-50 border-2 border-slate-200 hover:border-amber-500 p-3 rounded-xl text-center transition shadow-sm">
+                            <span class="text-2xl block text-navy-900 font-bold">♩</span>
+                            <strong class="text-xs text-navy-900 block">Negra</strong>
+                            <span class="text-[11px] text-amber-600 font-bold">+ 1 tiempo</span>
+                        </button>
+
+                        <button onclick="addM3Note('eighthPair', 1)" class="bg-white hover:bg-amber-50 border-2 border-slate-200 hover:border-amber-500 p-3 rounded-xl text-center transition shadow-sm">
+                            <span class="text-2xl block text-navy-900 font-bold">♫</span>
+                            <strong class="text-xs text-navy-900 block">2 Corcheas</strong>
+                            <span class="text-[11px] text-amber-600 font-bold">+ 1 tiempo</span>
+                        </button>
+
+                        <button onclick="addM3Note('half', 2)" class="bg-white hover:bg-amber-50 border-2 border-slate-200 hover:border-amber-500 p-3 rounded-xl text-center transition shadow-sm">
+                            <span class="text-2xl block text-navy-900 font-bold">𝅗𝅥</span>
+                            <strong class="text-xs text-navy-900 block">Blanca</strong>
+                            <span class="text-[11px] text-amber-600 font-bold">+ 2 tiempos</span>
+                        </button>
+
+                        <button onclick="addM3Note('whole', 4)" class="bg-white hover:bg-amber-50 border-2 border-slate-200 hover:border-amber-500 p-3 rounded-xl text-center transition shadow-sm">
+                            <span class="text-2xl block text-navy-900 font-bold">𝅝</span>
+                            <strong class="text-xs text-navy-900 block">Redonda</strong>
+                            <span class="text-[11px] text-amber-600 font-bold">+ 4 tiempos</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Pentagrama Interactivo del Taller -->
+                <div class="bg-slate-900 rounded-xl p-5 border border-slate-800 overflow-hidden">
+                    <div class="flex justify-between items-center text-xs text-slate-300 mb-2 px-2">
+                        <span>Compás 1: <strong id="m3-c1-status" class="text-amber-400">0 / 2 tiempos</strong></span>
+                        <span>Compás 2: <strong id="m3-c2-status" class="text-slate-400">0 / 2 tiempos</strong></span>
+                    </div>
+
+                    <svg viewBox="0 0 800 215" class="w-full h-auto select-none">
+                        <!-- 5 Líneas -->
+                        <line x1="30" y1="40" x2="770" y2="40" stroke="#475569" stroke-width="3"/>
+                        <line x1="30" y1="75" x2="770" y2="75" stroke="#475569" stroke-width="3"/>
+                        <line x1="30" y1="110" x2="770" y2="110" stroke="#475569" stroke-width="3"/>
+                        <line x1="30" y1="145" x2="770" y2="145" stroke="#475569" stroke-width="3"/>
+                        <line x1="30" y1="180" x2="770" y2="180" stroke="#475569" stroke-width="3"/>
+
+                        <!-- Llave de Sol -->
+                        <text x="70" y="169" font-size="170" font-family="'Cinzel', 'Times New Roman', serif" fill="#f59e0b" text-anchor="middle">𝄞</text>
+
+                        <!-- Cifra Indicadora -->
+                        <text id="m3-svg-num" x="135" y="103" font-size="68" font-weight="800" font-family="'Inter', sans-serif" fill="#ffffff" text-anchor="middle">2</text>
+                        <text x="135" y="173" font-size="68" font-weight="800" font-family="'Inter', sans-serif" fill="#fbbf24" text-anchor="middle">4</text>
+
+                        <!-- Líneas Divisorias Fijas para los 2 Compases -->
+                        <line id="m3-bar-mid" x1="455" y1="40" x2="455" y2="180" stroke="#64748b" stroke-width="3" stroke-dasharray="5"/>
+                        <g id="m3-bar-end" opacity="0.4">
+                            <line x1="752" y1="40" x2="752" y2="180" stroke="#f59e0b" stroke-width="2"/>
+                            <line x1="760" y1="40" x2="760" y2="180" stroke="#f59e0b" stroke-width="6"/>
+                        </g>
+
+                        <!-- Notas colocadas por el estudiante -->
+                        <g id="m3-user-notes"></g>
+                    </svg>
+
+                    <div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <p id="m3-feedback" class="text-xs sm:text-sm font-semibold text-amber-400">
+                            Agrega figuras hasta completar el Compás 1.
+                        </p>
+                        <button onclick="playM3Creation()" id="m3-play-btn" class="hidden bg-emerald-500 hover:bg-emerald-600 text-navy-950 font-extrabold px-4 py-2 rounded-lg text-xs shadow transition flex items-center gap-1.5">
+                            <span>🔊</span> Escuchar mi Creación
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center">
+                <button onclick="switchTab(2)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-5 py-2.5 rounded-xl font-bold text-sm">
+                    ⏮ Volver al Módulo 2
+                </button>
+                <button onclick="switchTab(4)" class="bg-navy-900 hover:bg-navy-800 text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 shadow-md">
+                    Ir a la Evaluación Final ➔
+                </button>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- MÓDULO 4: EVALUACIÓN FINAL Y COMPROBANTE OFICIAL -->
+        <!-- ============================================================= -->
+        <section id="module-4" class="tab-content space-y-6 hidden">
+            <!-- Formulario y Cuestionario -->
+            <div id="quiz-container" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hide-on-screenshot">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="bg-amber-100 text-amber-700 font-bold px-3 py-1 rounded-full text-xs uppercase">Módulo 4 • Evaluación</span>
+                    <h2 class="text-2xl font-bold text-navy-900">Evaluación Final: Cifra Indicadora</h2>
+                </div>
+                <p class="text-slate-600 text-sm mb-6">
+                    Completa tus datos y responde correctamente las <strong>5 preguntas (100% de exigencia)</strong> para obtener tu comprobante oficial firmado por el Profesor Isaac Araya.
+                </p>
+
+                <!-- Datos del Estudiante -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div>
+                        <label class="block text-xs font-bold text-navy-900 uppercase tracking-wider mb-1">Nombre y Apellido del Estudiante *</label>
+                        <input type="text" id="student-name" placeholder="Ej: Sofía Muñoz" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-navy-900 uppercase tracking-wider mb-1">Curso / Grado *</label>
+                        <input type="text" id="student-grade" placeholder="Ej: 6.º Básico B" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                </div>
+
+                <!-- 5 Preguntas -->
+                <form id="quiz-form" class="space-y-5">
+                    <!-- Q1 -->
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <label class="font-bold text-navy-900 text-sm block mb-2">1. ¿Qué indica el número superior (numerador) de una cifra indicadora de compás?</label>
+                        <div class="space-y-1.5 text-xs text-slate-700">
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q1" value="a" class="accent-amber-500"> a) La velocidad rápida o lenta de la canción</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q1" value="b" class="accent-amber-500"> b) La cantidad de tiempos que caben dentro de cada compás</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q1" value="c" class="accent-amber-500"> c) El número de líneas que tiene el pentagrama</label>
+                        </div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <label class="font-bold text-navy-900 text-sm block mb-2">2. En las cifras 2/4, 3/4 y 4/4, ¿qué figura musical representa el número 4 de abajo (denominador)?</label>
+                        <div class="space-y-1.5 text-xs text-slate-700">
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q2" value="a" class="accent-amber-500"> a) La Redonda (4 tiempos)</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q2" value="b" class="accent-amber-500"> b) La Blanca (2 tiempos)</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q2" value="c" class="accent-amber-500"> c) La Negra (1 tiempo)</label>
+                        </div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <label class="font-bold text-navy-900 text-sm block mb-2">3. ¿Cuántos tiempos de Negra entran en cada compás si la cifra indicadora es 3/4?</label>
+                        <div class="space-y-1.5 text-xs text-slate-700">
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q3" value="a" class="accent-amber-500"> a) 3 tiempos de Negra</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q3" value="b" class="accent-amber-500"> b) 4 tiempos de Negra</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q3" value="c" class="accent-amber-500"> c) 2 tiempos de Negra</label>
+                        </div>
+                    </div>
+
+                    <!-- Q4 -->
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <label class="font-bold text-navy-900 text-sm block mb-2">4. Si estamos en un compás de 4/4 y ya escribimos una Blanca (2 tiempos), ¿qué figuras nos faltan para completar el compás?</label>
+                        <div class="space-y-1.5 text-xs text-slate-700">
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q4" value="a" class="accent-amber-500"> a) Una Redonda (4 tiempos)</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q4" value="b" class="accent-amber-500"> b) Dos Negras (1 + 1 = 2 tiempos)</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q4" value="c" class="accent-amber-500"> c) Una sola Negra (1 tiempo)</label>
+                        </div>
+                    </div>
+
+                    <!-- Q5 -->
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <label class="font-bold text-navy-900 text-sm block mb-2">5. ¿Qué cifra indicadora corresponde a un compás binario de 2 tiempos (como en las marchas o el country)?</label>
+                        <div class="space-y-1.5 text-xs text-slate-700">
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q5" value="a" class="accent-amber-500"> a) 4/4</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q5" value="b" class="accent-amber-500"> b) 3/4</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="q5" value="c" class="accent-amber-500"> c) 2/4</label>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="checkQuiz()" class="w-full bg-amber-500 hover:bg-amber-600 text-navy-900 font-extrabold py-3.5 rounded-xl shadow-md transition text-sm uppercase tracking-wider">
+                        🎓 Evaluar y Emitir Comprobante
+                    </button>
+                </form>
+
+                <!-- Alerta de Reintento si < 5/5 -->
+                <div id="quiz-error-banner" class="hidden mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-800 text-sm text-center font-medium"></div>
+            </div>
+
+            <!-- ============================================================= -->
+            <!-- COMPROBANTE OFICIAL DE APROBACIÓN (100% EXIGENCIA) -->
+            <!-- ============================================================= -->
+            <div id="certificate-section" class="hidden pt-2">
+                <div id="screenshot-wrapper" class="max-w-3xl mx-auto certificate-border p-6 sm:p-10 rounded-2xl relative shadow-2xl bg-white">
+                    
+                    <!-- Marca de agua decorativa -->
+                    <div class="absolute inset-0 overflow-hidden pointer-events-none select-none rounded-2xl">
+                        <span class="absolute right-4 bottom-2 opacity-5 text-[240px] leading-none font-serif text-navy-900">𝄞</span>
+                    </div>
+
+                    <!-- Encabezado del Comprobante -->
+                    <div class="text-center border-b border-slate-200 pb-5 mb-5 relative">
+                        <div class="inline-block bg-navy-900 text-amber-400 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-2">
+                            Comprobante Oficial de Aprendizaje
+                        </div>
+                        <h2 class="font-serif text-2xl sm:text-3xl font-extrabold text-navy-900 uppercase tracking-wide">
+                            Notación Musical - Guía 2
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-1 font-semibold">Cifra Indicadora de Compás (2/4, 3/4, 4/4) • Profesor Isaac Araya</p>
+                    </div>
+
+                    <!-- Datos del Estudiante Certificado -->
+                    <div class="text-center space-y-3 mb-6 relative">
+                        <p class="text-xs text-slate-500 uppercase tracking-widest font-bold">Se certifica que el/la estudiante:</p>
+                        <h3 id="cert-student-name" class="text-2xl sm:text-3xl font-bold text-navy-900 underline decoration-amber-500 decoration-4 underline-offset-8">
+                            [Nombre del Estudiante]
+                        </h3>
+                        <p class="text-sm text-slate-600 font-medium">
+                            Curso / Grado: <strong id="cert-student-grade" class="text-navy-900">[Curso]</strong>
+                        </p>
+                        <p class="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
+                            Ha completado con éxito la <strong>Guía Autónoma 2 de Notación Musical</strong>, demostrando dominio en la lectura y construcción rítmica de compases en <strong>2/4, 3/4 y 4/4</strong>.
+                        </p>
+                    </div>
+
+                    <!-- Cuadro de Puntaje y Competencias -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6 relative">
+                        <div class="text-center sm:border-r border-slate-200 sm:pr-2 flex flex-col justify-center">
+                            <span class="text-xs text-slate-500 font-bold block uppercase">Puntaje Obtenido</span>
+                            <span class="text-2xl font-extrabold text-emerald-600 my-0.5">5 / 5 (100%)</span>
+                            <span class="text-[11px] bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full w-max mx-auto">✓ Evaluación Aprobada</span>
+                        </div>
+                        <div class="text-left sm:pl-2 text-xs space-y-1">
+                            <span class="text-slate-500 font-bold block uppercase mb-1">Competencias Logradas:</span>
+                            <div class="text-slate-700 font-medium">✓ Función del numerador y denominador</div>
+                            <div class="text-slate-700 font-medium">✓ Unidad de tiempo (Negra = 1 tiempo)</div>
+                            <div class="text-slate-700 font-medium">✓ Lectura en compases de 2/4, 3/4 y 4/4</div>
+                            <div class="text-slate-700 font-medium">✓ Construcción rítmica de compases</div>
+                        </div>
+                    </div>
+
+                    <!-- Pie de Firma y Validación -->
+                    <div class="flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 pt-4 border-t border-slate-200 gap-4 relative">
+                        <div class="text-center sm:text-left">
+                            <span class="block font-bold text-navy-900">DOCENTE A CARGO</span>
+                            <span>Profesor Isaac Araya</span>
+                        </div>
+                        <div class="text-center">
+                            <span class="block font-bold text-navy-900">FECHA DE EMISIÓN</span>
+                            <span id="cert-date">--/--/----</span>
+                        </div>
+                        <div class="text-center sm:text-right">
+                            <span class="block font-bold text-navy-900">CÓDIGO DE VERIFICACIÓN</span>
+                            <span id="cert-code" class="font-mono text-amber-600 font-bold">MUS-2026-XXXXX</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 text-center relative">
+                        <span class="inline-flex items-center gap-1.5 bg-amber-100 border border-amber-300 text-amber-800 px-3.5 py-1 rounded-full text-[11px] font-bold">
+                            🛡️ VERIFICADO • GUÍA AUTÓNOMA 2 • MÚSICA
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Indicaciones Oficiales de Envío y Botones de Acción -->
+                <div class="max-w-3xl mx-auto mt-6 space-y-4 hide-on-screenshot">
+                    <div class="bg-navy-900 text-white p-4 rounded-xl border-l-4 border-amber-500 shadow-md text-xs sm:text-sm leading-relaxed">
+                        <p class="font-bold text-amber-400 uppercase tracking-wider text-xs mb-1">📩 Instrucciones de Entrega:</p>
+                        <p>
+                            "Al obtener el comprobante en PDF o la captura de pantalla debes enviarla a tu profesor/a jefe y a mi correo <strong class="text-amber-300 underline select-all">iarayai@eduhuechuraba.cl</strong>"
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap justify-center gap-3">
+                        <button onclick="toggleScreenshotMode(true)" class="bg-amber-500 hover:bg-amber-600 text-navy-900 font-extrabold px-6 py-3 rounded-xl text-sm shadow-md transition inline-flex items-center gap-2">
+                            <span>📜</span> Comprobante
+                        </button>
+                        <button onclick="downloadCertificatePDF()" id="btn-download-pdf" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl text-sm shadow-md transition inline-flex items-center gap-2">
+                            <span>📥</span> Descargar PDF
+                        </button>
+                    </div>
+                    <p id="pdf-feedback-msg" class="hidden text-center text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl p-2.5"></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="bg-navy-950 text-slate-400 text-xs py-4 text-center border-t border-slate-800 hide-on-screenshot">
+        <p>Notación Musical - Guía 2 • Cifra Indicadora de Compás • Profesor Isaac Araya</p>
+    </footer>
+
+    <!-- ===================================================================== -->
+    <!-- LÓGICA JAVASCRIPT Y SINTETIZADOR WEB AUDIO API -->
+    <!-- ===================================================================== -->
+    <script>
+        // --- SINTETIZADOR DE AUDIO WEB AUDIO API ---
+        const AudioFX = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            },
+            playTone(freq, duration = 0.25, accent = false, delay = 0) {
+                this.init();
+                const startTime = this.ctx.currentTime + delay;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = accent ? 'triangle' : 'sine';
+                osc.frequency.setValueAtTime(freq, startTime);
+
+                const peak = accent ? 0.28 : 0.16;
+                gain.gain.setValueAtTime(0.001, startTime);
+                gain.gain.linearRampToValueAtTime(peak, startTime + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(startTime);
+                osc.stop(startTime + duration + 0.02);
+            },
+            playCorrect() {
+                this.playTone(523.25, 0.18, true, 0);
+                this.playTone(659.25, 0.25, true, 0.12);
+            },
+            playWrong() {
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(175, now);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            }
+        };
+
+        // --- NAVEGACIÓN POR PESTAÑAS ---
+        function switchTab(tabNum) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            const activeTab = document.getElementById(`module-${tabNum}`);
+            if (activeTab) activeTab.classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+                if (idx + 1 === tabNum) {
+                    btn.className = "tab-btn px-4 py-3 font-semibold border-b-2 border-amber-500 text-amber-400 flex items-center gap-2 whitespace-nowrap";
+                } else {
+                    btn.className = "tab-btn px-4 py-3 font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap";
+                }
+            });
+
+            document.getElementById('step-indicator').innerText = `Paso ${tabNum} de 4`;
+            document.getElementById('progress-bar').style.width = `${tabNum * 25}%`;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- DIBUJO DE FIGURAS MUSICALES EN SVG (Alineadas a 2ª Línea SOL y=145) ---
+        function renderNoteSVG(type, x, highlight = false) {
+            const color = highlight ? '#34d399' : '#fbbf24';
+            const strokeColor = highlight ? '#34d399' : '#f8fafc';
+            if (type === 'quarter') {
+                return `
+                    <g class="note-svg-item">
+                        <ellipse cx="${x}" cy="145" rx="12" ry="9" fill="${color}" transform="rotate(-18 ${x} 145)"/>
+                        <line x1="${x + 11}" y1="143" x2="${x + 11}" y2="85" stroke="${strokeColor}" stroke-width="3.2" stroke-linecap="round"/>
+                    </g>
+                `;
+            } else if (type === 'eighthPair') {
+                return `
+                    <g class="note-svg-item">
+                        <ellipse cx="${x - 14}" cy="145" rx="11" ry="8.5" fill="${color}" transform="rotate(-18 ${x - 14} 145)"/>
+                        <line x1="${x - 4}" y1="143" x2="${x - 4}" y2="88" stroke="${strokeColor}" stroke-width="3"/>
+                        <ellipse cx="${x + 16}" cy="145" rx="11" ry="8.5" fill="${color}" transform="rotate(-18 ${x + 16} 145)"/>
+                        <line x1="${x + 26}" y1="143" x2="${x + 26}" y2="88" stroke="${strokeColor}" stroke-width="3"/>
+                        <line x1="${x - 5.5}" y1="88" x2="${x + 27.5}" y2="88" stroke="${strokeColor}" stroke-width="6"/>
+                    </g>
+                `;
+            } else if (type === 'half') {
+                return `
+                    <g class="note-svg-item">
+                        <ellipse cx="${x}" cy="145" rx="12" ry="9" fill="none" stroke="${color}" stroke-width="3.5" transform="rotate(-18 ${x} 145)"/>
+                        <line x1="${x + 11}" y1="143" x2="${x + 11}" y2="85" stroke="${strokeColor}" stroke-width="3.2" stroke-linecap="round"/>
+                    </g>
+                `;
+            } else if (type === 'whole') {
+                return `
+                    <g class="note-svg-item">
+                        <ellipse cx="${x}" cy="145" rx="14" ry="9.5" fill="none" stroke="${color}" stroke-width="4"/>
+                    </g>
+                `;
+            }
+            return '';
+        }
+
+        // --- MÓDULO 1: EXPLORADOR DE CIFRA INDICADORA ---
+        let m1CurrentNumerator = 4;
+
+        function setM1Numerator(num) {
+            m1CurrentNumerator = num;
+            document.getElementById('m1-svg-num').textContent = num;
+
+            [2, 3, 4].forEach(n => {
+                const btn = document.getElementById(`m1-btn-${n}`);
+                if (n === num) {
+                    btn.className = "m1-num-btn px-3.5 py-2 rounded-lg text-xs font-bold bg-amber-500 text-navy-900 shadow transition";
+                } else {
+                    btn.className = "m1-num-btn px-3.5 py-2 rounded-lg text-xs font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition";
+                }
+            });
+
+            const notesGroup = document.getElementById('m1-notes-group');
+            let html = '';
+            const startX = 230;
+            const spacing = 105;
+
+            for (let i = 0; i < num; i++) {
+                const nx = startX + i * spacing;
+                html += renderNoteSVG('quarter', nx, i === 0);
+                html += `<text x="${nx}" y="202" font-size="13" font-weight="bold" fill="${i === 0 ? '#34d399' : '#94a3b8'}" text-anchor="middle">Tiempo ${i + 1}</text>`;
+            }
+
+            const barX = startX + num * spacing - 35;
+            html += `
+                <line x1="${barX}" y1="40" x2="${barX}" y2="180" stroke="#f59e0b" stroke-width="2.5"/>
+                <line x1="${barX + 8}" y1="40" x2="${barX + 8}" y2="180" stroke="#f59e0b" stroke-width="6"/>
+            `;
+
+            notesGroup.innerHTML = html;
+            document.getElementById('m1-explanation').innerHTML = `En <strong>${num}/4</strong> entran exactamente <strong>${num} tiempos de Negra</strong> antes de cerrar el compás con la barra.`;
+        }
+
+        function playM1Pulse() {
+            for (let i = 0; i < m1CurrentNumerator; i++) {
+                const isFirst = i === 0;
+                AudioFX.playTone(isFirst ? 587.33 : 392.00, 0.25, isFirst, i * 0.45);
+            }
+        }
+
+        // --- MÓDULO 2: EJEMPLOS DE 2/4, 3/4 Y 4/4 ---
+        let m2ActiveMeter = '2/4';
+
+        const m2Examples = {
+            '2/4': {
+                num: '2',
+                title: 'Compás de 2/4',
+                measures: [
+                    [
+                        { type: 'quarter', beats: 1, label: '1' },
+                        { type: 'eighthPair', beats: 1, label: '2' }
+                    ],
+                    [
+                        { type: 'half', beats: 2, label: '1 - 2' }
+                    ]
+                ]
+            },
+            '3/4': {
+                num: '3',
+                title: 'Compás de 3/4',
+                measures: [
+                    [
+                        { type: 'quarter', beats: 1, label: '1' },
+                        { type: 'quarter', beats: 1, label: '2' },
+                        { type: 'quarter', beats: 1, label: '3' }
+                    ],
+                    [
+                        { type: 'half', beats: 2, label: '1 - 2' },
+                        { type: 'quarter', beats: 1, label: '3' }
+                    ]
+                ]
+            },
+            '4/4': {
+                num: '4',
+                title: 'Compás de 4/4',
+                measures: [
+                    [
+                        { type: 'half', beats: 2, label: '1 - 2' },
+                        { type: 'eighthPair', beats: 1, label: '3' },
+                        { type: 'quarter', beats: 1, label: '4' }
+                    ],
+                    [
+                        { type: 'whole', beats: 4, label: '1 - 2 - 3 - 4' }
+                    ]
+                ]
+            }
+        };
+
+        function selectM2Meter(meter) {
+            m2ActiveMeter = meter;
+            const data = m2Examples[meter];
+
+            ['2/4', '3/4', '4/4'].forEach(m => {
+                const card = document.getElementById(`m2-card-${m}`);
+                const badge = card.querySelector('span:last-child');
+                if (m === meter) {
+                    card.className = "m2-card cursor-pointer p-4 rounded-xl border-2 border-amber-500 bg-amber-50/40 transition shadow-sm";
+                    badge.className = "text-[11px] font-bold bg-amber-500 text-navy-900 px-2.5 py-0.5 rounded-full";
+                } else {
+                    card.className = "m2-card cursor-pointer p-4 rounded-xl border-2 border-slate-200 bg-slate-50 hover:border-slate-300 transition";
+                    badge.className = "text-[11px] font-bold bg-slate-200 text-slate-700 px-2.5 py-0.5 rounded-full";
+                }
+            });
+
+            document.getElementById('m2-active-title').textContent = data.title;
+            document.getElementById('m2-svg-num').textContent = data.num;
+
+            const container = document.getElementById('m2-dynamic-measures');
+            let html = '';
+
+            // Compás 1 (x = 185 hasta 465)
+            const m1Notes = data.measures[0];
+            const m1Step = 260 / m1Notes.length;
+            m1Notes.forEach((n, idx) => {
+                const nx = 215 + idx * m1Step;
+                html += renderNoteSVG(n.type, nx, idx === 0);
+                html += `<text x="${nx}" y="204" font-size="12" font-weight="bold" fill="#94a3b8" text-anchor="middle">${n.label}</text>`;
+            });
+
+            // Línea divisoria intermedia
+            html += `<line x1="465" y1="40" x2="465" y2="180" stroke="#94a3b8" stroke-width="3.5"/>`;
+
+            // Compás 2 (x = 485 hasta 755)
+            const m2Notes = data.measures[1];
+            const m2Step = 250 / m2Notes.length;
+            m2Notes.forEach((n, idx) => {
+                const nx = 525 + idx * m2Step;
+                html += renderNoteSVG(n.type, nx, idx === 0);
+                html += `<text x="${nx}" y="204" font-size="12" font-weight="bold" fill="#94a3b8" text-anchor="middle">${n.label}</text>`;
+            });
+
+            // Doble barra final
+            html += `
+                <line x1="748" y1="40" x2="748" y2="180" stroke="#f59e0b" stroke-width="2.5"/>
+                <line x1="756" y1="40" x2="756" y2="180" stroke="#f59e0b" stroke-width="6.5"/>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function playM2Example() {
+            const data = m2Examples[m2ActiveMeter];
+            let currentTime = 0;
+            const beatDuration = 0.45;
+
+            data.measures.forEach((measure) => {
+                measure.forEach((note, nIdx) => {
+                    const isAccent = nIdx === 0;
+                    if (note.type === 'eighthPair') {
+                        AudioFX.playTone(392.00, 0.18, isAccent, currentTime);
+                        AudioFX.playTone(440.00, 0.18, false, currentTime + beatDuration / 2);
+                    } else {
+                        const freq = isAccent ? 523.25 : 392.00;
+                        AudioFX.playTone(freq, note.beats * beatDuration * 0.85, isAccent, currentTime);
+                    }
+                    currentTime += note.beats * beatDuration;
+                });
+            });
+        }
+
+        // --- MÓDULO 3: TALLER PRÁCTICO DE CONSTRUCCIÓN DE COMPASES ---
+        let m3Meter = '2/4';
+        let m3MaxBeats = 2;
+        let m3Compas1 = [];
+        let m3Compas2 = [];
+
+        function setM3Meter(meter) {
+            m3Meter = meter;
+            m3MaxBeats = parseInt(meter.split('/')[0]);
+
+            ['2/4', '3/4', '4/4'].forEach(m => {
+                const btn = document.getElementById(`m3-meter-${m}`);
+                if (m === meter) {
+                    btn.className = "m3-meter-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-navy-900 shadow";
+                } else {
+                    btn.className = "m3-meter-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100";
+                }
+            });
+
+            document.getElementById('m3-svg-num').textContent = m3MaxBeats;
+            document.getElementById('m3-capacity-badge').textContent = `${m3MaxBeats} tiempos`;
+            resetM3Workshop();
+        }
+
+        function resetM3Workshop() {
+            m3Compas1 = [];
+            m3Compas2 = [];
+            document.getElementById('m3-play-btn').classList.add('hidden');
+            document.getElementById('m3-feedback').className = "text-xs sm:text-sm font-semibold text-amber-400";
+            document.getElementById('m3-feedback').textContent = `Agrega figuras hasta completar el Compás 1 (${m3MaxBeats} tiempos).`;
+            renderM3Workshop();
+        }
+
+        function getSumBeats(arr) {
+            return arr.reduce((acc, item) => acc + item.beats, 0);
+        }
+
+        function addM3Note(type, beats) {
+            const c1Beats = getSumBeats(m3Compas1);
+            const c2Beats = getSumBeats(m3Compas2);
+            const feedback = document.getElementById('m3-feedback');
+
+            if (c1Beats < m3MaxBeats) {
+                if (c1Beats + beats > m3MaxBeats) {
+                    AudioFX.playWrong();
+                    feedback.className = "text-xs sm:text-sm font-semibold text-red-400";
+                    feedback.textContent = `⚠️ Esa figura excede los ${m3MaxBeats} tiempos del Compás 1 (te quedan ${m3MaxBeats - c1Beats} tiempo/s).`;
+                    return;
+                }
+                m3Compas1.push({ type, beats });
+                AudioFX.playTone(440, 0.2, true, 0);
+
+                if (getSumBeats(m3Compas1) === m3MaxBeats) {
+                    feedback.className = "text-xs sm:text-sm font-semibold text-emerald-400";
+                    feedback.textContent = `✓ ¡Compás 1 completo! Se colocó la línea divisoria. Ahora completa el Compás 2.`;
+                } else {
+                    feedback.className = "text-xs sm:text-sm font-semibold text-amber-400";
+                    feedback.textContent = `Bien. Llevas ${getSumBeats(m3Compas1)} de ${m3MaxBeats} tiempos en el Compás 1.`;
+                }
+            } else if (c2Beats < m3MaxBeats) {
+                if (c2Beats + beats > m3MaxBeats) {
+                    AudioFX.playWrong();
+                    feedback.className = "text-xs sm:text-sm font-semibold text-red-400";
+                    feedback.textContent = `⚠️ Esa figura excede los ${m3MaxBeats} tiempos del Compás 2 (te quedan ${m3MaxBeats - c2Beats} tiempo/s).`;
+                    return;
+                }
+                m3Compas2.push({ type, beats });
+                AudioFX.playTone(523.25, 0.2, true, 0);
+
+                if (getSumBeats(m3Compas2) === m3MaxBeats) {
+                    AudioFX.playCorrect();
+                    feedback.className = "text-xs sm:text-sm font-bold text-emerald-400";
+                    feedback.textContent = `🎉 ¡Excelente! Completaste ambos compases en ${m3Meter} y cerraste con la Doble Barra Final.`;
+                    document.getElementById('m3-play-btn').classList.remove('hidden');
+                } else {
+                    feedback.className = "text-xs sm:text-sm font-semibold text-amber-400";
+                    feedback.textContent = `Bien. Llevas ${getSumBeats(m3Compas2)} de ${m3MaxBeats} tiempos en el Compás 2.`;
+                }
+            } else {
+                feedback.className = "text-xs sm:text-sm font-bold text-emerald-400";
+                feedback.textContent = `Ya completaste los 2 compases. Pulsa "Escuchar mi Creación" o "Reiniciar Taller".`;
+            }
+
+            renderM3Workshop();
+        }
+
+        function renderM3Workshop() {
+            const c1Beats = getSumBeats(m3Compas1);
+            const c2Beats = getSumBeats(m3Compas2);
+
+            document.getElementById('m3-c1-status').textContent = `${c1Beats} / ${m3MaxBeats} tiempos`;
+            document.getElementById('m3-c1-status').className = c1Beats === m3MaxBeats ? 'text-emerald-400' : 'text-amber-400';
+
+            document.getElementById('m3-c2-status').textContent = `${c2Beats} / ${m3MaxBeats} tiempos`;
+            document.getElementById('m3-c2-status').className = c2Beats === m3MaxBeats ? 'text-emerald-400' : 'text-slate-400';
+
+            const midBar = document.getElementById('m3-bar-mid');
+            if (c1Beats === m3MaxBeats) {
+                midBar.setAttribute('stroke', '#f59e0b');
+                midBar.setAttribute('stroke-dasharray', 'none');
+                midBar.setAttribute('stroke-width', '4');
+            } else {
+                midBar.setAttribute('stroke', '#64748b');
+                midBar.setAttribute('stroke-dasharray', '5');
+                midBar.setAttribute('stroke-width', '3');
+            }
+
+            const endBar = document.getElementById('m3-bar-end');
+            endBar.setAttribute('opacity', c2Beats === m3MaxBeats ? '1' : '0.35');
+
+            let html = '';
+            m3Compas1.forEach((n, idx) => {
+                const nx = 205 + idx * 62;
+                html += renderNoteSVG(n.type, nx, idx === 0);
+            });
+
+            m3Compas2.forEach((n, idx) => {
+                const nx = 500 + idx * 62;
+                html += renderNoteSVG(n.type, nx, idx === 0);
+            });
+
+            document.getElementById('m3-user-notes').innerHTML = html;
+        }
+
+        function playM3Creation() {
+            let t = 0;
+            const beatDur = 0.45;
+            [m3Compas1, m3Compas2].forEach(compas => {
+                compas.forEach((note, idx) => {
+                    const accent = idx === 0;
+                    if (note.type === 'eighthPair') {
+                        AudioFX.playTone(392, 0.18, accent, t);
+                        AudioFX.playTone(440, 0.18, false, t + beatDur / 2);
+                    } else {
+                        AudioFX.playTone(accent ? 523.25 : 392, note.beats * beatDur * 0.85, accent, t);
+                    }
+                    t += note.beats * beatDur;
+                });
+            });
+        }
+
+        // --- MÓDULO 4: EVALUACIÓN ESTRICTA (100% EXIGENCIA) Y COMPROBANTE ---
+        let lastGeneratedCode = 'MUS-2026-XXXXX';
+        let lastGeneratedDate = '';
+
+        function checkQuiz() {
+            const name = document.getElementById('student-name').value.trim();
+            const grade = document.getElementById('student-grade').value.trim();
+            const errBanner = document.getElementById('quiz-error-banner');
+
+            if (!name || !grade) {
+                errBanner.classList.remove('hidden');
+                errBanner.innerHTML = '⚠️ Por favor ingresa tu <strong>Nombre, Apellido y Curso</strong> antes de evaluar.';
+                AudioFX.playWrong();
+                return;
+            }
+
+            const answers = {
+                q1: document.querySelector('input[name="q1"]:checked')?.value,
+                q2: document.querySelector('input[name="q2"]:checked')?.value,
+                q3: document.querySelector('input[name="q3"]:checked')?.value,
+                q4: document.querySelector('input[name="q4"]:checked')?.value,
+                q5: document.querySelector('input[name="q5"]:checked')?.value,
+            };
+
+            const correctKey = { q1: 'b', q2: 'c', q3: 'a', q4: 'b', q5: 'c' };
+            let score = 0;
+            for (let key in correctKey) {
+                if (answers[key] === correctKey[key]) score++;
+            }
+
+            if (score < 5) {
+                errBanner.classList.remove('hidden');
+                errBanner.innerHTML = `⚠️ Obtuviste <strong>${score} de 5 aciertos (${score * 20}%)</strong>.<br>Para emitir el Comprobante Oficial firmado por el Profesor Isaac Araya debes lograr <strong>5/5 aciertos (100%)</strong>. Revisa tus respuestas e inténtalo nuevamente.`;
+                AudioFX.playWrong();
+                return;
+            }
+
+            // 5/5 Aprobado -> Mostrar Comprobante Oficial
+            errBanner.classList.add('hidden');
+            document.getElementById('quiz-container').classList.add('hidden');
+            const certSection = document.getElementById('certificate-section');
+            certSection.classList.remove('hidden');
+
+            document.getElementById('cert-student-name').innerText = name;
+            document.getElementById('cert-student-grade').innerText = grade;
+
+            lastGeneratedDate = new Date().toLocaleDateString('es-ES', {
+                day: '2-digit', month: 'long', year: 'numeric'
+            });
+            document.getElementById('cert-date').innerText = lastGeneratedDate;
+
+            lastGeneratedCode = 'MUS-2026-' + Math.random().toString(36).substring(2, 7).toUpperCase();
+            document.getElementById('cert-code').innerText = lastGeneratedCode;
+
+            AudioFX.playCorrect();
+            window.scrollTo({ top: certSection.offsetTop - 20, behavior: 'smooth' });
+        }
+
+        function toggleScreenshotMode(enable) {
+            const banner = document.getElementById('screenshot-banner');
+            if (enable) {
+                document.body.classList.add('screenshot-active');
+                banner.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                document.body.classList.remove('screenshot-active');
+                banner.classList.add('hidden');
+            }
+        }
+
+        // --- GENERACIÓN DIRECTA E INFALIBLE DEL PDF CON jsPDF NATIVO (SIN RECORTES) ---
+        function downloadCertificatePDF() {
+            const btn = document.getElementById('btn-download-pdf');
+            const msg = document.getElementById('pdf-feedback-msg');
+            const studentName = document.getElementById('student-name').value.trim() || 'Estudiante';
+            const studentGrade = document.getElementById('student-grade').value.trim() || 'Curso';
+            const safeName = studentName.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]/g, '_');
+
+            if (!window.jspdf || !window.jspdf.jsPDF) {
+                msg.classList.remove('hidden', 'text-emerald-700', 'bg-emerald-50', 'border-emerald-200');
+                msg.classList.add('text-amber-800', 'bg-amber-50', 'border-amber-200');
+                msg.textContent = 'ℹ️ Usa el botón "📜 Comprobante" y toma una captura de pantalla completa.';
+                return;
+            }
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<span>⏳</span> Generando PDF...';
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'letter'
+                });
+
+                const pageW = doc.internal.pageSize.getWidth(); // 215.9 mm
+                const centerX = pageW / 2;
+
+                // Fondo blanco limpio
+                doc.setFillColor(255, 255, 255);
+                doc.rect(0, 0, pageW, 279.4, 'F');
+
+                // Marco exterior Azul Marino (#0f172a)
+                doc.setDrawColor(15, 23, 42);
+                doc.setLineWidth(3.5);
+                doc.roundedRect(14, 14, pageW - 28, 251, 5, 5, 'S');
+
+                // Marco interior Dorado (#d97706)
+                doc.setDrawColor(217, 119, 6);
+                doc.setLineWidth(1.2);
+                doc.roundedRect(18, 18, pageW - 36, 243, 3, 3, 'S');
+
+                // Etiqueta superior
+                doc.setFillColor(15, 23, 42);
+                doc.roundedRect(centerX - 46, 28, 92, 8, 4, 4, 'F');
+                doc.setTextColor(251, 191, 36);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(8.5);
+                doc.text('COMPROBANTE OFICIAL DE APRENDIZAJE', centerX, 33.3, { align: 'center' });
+
+                // Título Principal
+                doc.setTextColor(15, 23, 42);
+                doc.setFont('times', 'bold');
+                doc.setFontSize(22);
+                doc.text('NOTACIÓN MUSICAL - GUÍA 2', centerX, 48, { align: 'center' });
+
+                // Subtítulo
+                doc.setTextColor(100, 116, 139);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(10);
+                doc.text('Cifra Indicadora de Compás (2/4, 3/4, 4/4)  •  Profesor Isaac Araya', centerX, 55, { align: 'center' });
+
+                // Línea separadora
+                doc.setDrawColor(226, 232, 240);
+                doc.setLineWidth(0.5);
+                doc.line(30, 62, pageW - 30, 62);
+
+                // Certificación
+                doc.setTextColor(100, 116, 139);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(9.5);
+                doc.text('SE CERTIFICA QUE EL/LA ESTUDIANTE:', centerX, 76, { align: 'center' });
+
+                // Nombre del Estudiante
+                doc.setTextColor(15, 23, 42);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(20);
+                doc.text(studentName, centerX, 89, { align: 'center' });
+
+                // Subrayado dorado bajo el nombre
+                const nameWidth = Math.min(doc.getTextWidth(studentName) + 14, 150);
+                doc.setDrawColor(245, 158, 11);
+                doc.setLineWidth(1.3);
+                doc.line(centerX - nameWidth / 2, 92.5, centerX + nameWidth / 2, 92.5);
+
+                // Curso / Grado
+                doc.setTextColor(71, 85, 105);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(11.5);
+                doc.text(`Curso / Grado: ${studentGrade}`, centerX, 103, { align: 'center' });
+
+                // Párrafo descriptivo
+                doc.setTextColor(71, 85, 105);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(10.5);
+                const descLines = doc.splitTextToSize(
+                    'Ha completado con éxito la Guía Autónoma 2 de Notación Musical, demostrando dominio en la lectura, comprensión y construcción rítmica de compases en 2/4, 3/4 y 4/4.',
+                    155
+                );
+                doc.text(descLines, centerX, 116, { align: 'center' });
+
+                // Caja de Puntaje y Competencias
+                doc.setFillColor(248, 250, 252);
+                doc.setDrawColor(203, 213, 225);
+                doc.setLineWidth(0.5);
+                doc.roundedRect(26, 136, pageW - 52, 54, 3, 3, 'FD');
+
+                // Línea divisoria vertical interna
+                doc.line(95, 142, 95, 184);
+
+                // Columna Izquierda: Puntaje
+                doc.setTextColor(100, 116, 139);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(8.5);
+                doc.text('PUNTAJE OBTENIDO', 60.5, 149, { align: 'center' });
+
+                doc.setTextColor(5, 150, 105);
+                doc.setFontSize(18);
+                doc.text('5 / 5 (100%)', 60.5, 161, { align: 'center' });
+
+                doc.setFillColor(209, 250, 229);
+                doc.roundedRect(38, 166, 45, 7, 3.5, 3.5, 'F');
+                doc.setTextColor(6, 95, 70);
+                doc.setFontSize(8);
+                doc.text('EVALUACIÓN APROBADA', 60.5, 170.7, { align: 'center' });
+
+                // Columna Derecha: Competencias Logradas
+                doc.setTextColor(100, 116, 139);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(8.5);
+                doc.text('COMPETENCIAS LOGRADAS:', 102, 149);
+
+                doc.setTextColor(51, 65, 85);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(9);
+                doc.text('• Función del numerador y denominador', 102, 157);
+                doc.text('• Unidad de tiempo (Negra = 1 tiempo)', 102, 164);
+                doc.text('• Lectura en compases de 2/4, 3/4 y 4/4', 102, 171);
+                doc.text('• Construcción rítmica de compases', 102, 178);
+
+                // Línea separadora inferior
+                doc.setDrawColor(226, 232, 240);
+                doc.line(30, 204, pageW - 30, 204);
+
+                // Datos de Firma, Fecha y Código
+                doc.setTextColor(15, 23, 42);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(8.5);
+                doc.text('DOCENTE A CARGO', 32, 214);
+                doc.text('FECHA DE EMISIÓN', centerX, 214, { align: 'center' });
+                doc.text('CÓDIGO DE VERIFICACIÓN', pageW - 32, 214, { align: 'right' });
+
+                doc.setTextColor(71, 85, 105);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(9.5);
+                doc.text('Profesor Isaac Araya', 32, 220);
+                doc.text(lastGeneratedDate || new Date().toLocaleDateString('es-ES'), centerX, 220, { align: 'center' });
+
+                doc.setTextColor(217, 119, 6);
+                doc.setFont('courier', 'bold');
+                doc.setFontSize(10);
+                doc.text(lastGeneratedCode, pageW - 32, 220, { align: 'right' });
+
+                // Sello inferior
+                doc.setFillColor(254, 243, 199);
+                doc.setDrawColor(252, 211, 77);
+                doc.roundedRect(centerX - 48, 233, 96, 9, 4.5, 4.5, 'FD');
+                doc.setTextColor(146, 64, 14);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(8.5);
+                doc.text('VERIFICADO  •  GUÍA AUTÓNOMA 2  •  MÚSICA', centerX, 238.8, { align: 'center' });
+
+                // Guardar PDF
+                doc.save(`Comprobante_Guia2_${safeName}.pdf`);
+
+                btn.disabled = false;
+                btn.innerHTML = '<span>📥</span> Descargar PDF';
+                msg.classList.remove('hidden', 'text-amber-800', 'bg-amber-50', 'border-amber-200');
+                msg.classList.add('text-emerald-700', 'bg-emerald-50', 'border-emerald-200');
+                msg.textContent = '✅ ¡PDF completo generado y descargado! Recuerda enviarlo a tu profesor/a jefe y a iarayai@eduhuechuraba.cl';
+            } catch (err) {
+                btn.disabled = false;
+                btn.innerHTML = '<span>📥</span> Descargar PDF';
+                msg.classList.remove('hidden', 'text-emerald-700', 'bg-emerald-50', 'border-emerald-200');
+                msg.classList.add('text-amber-800', 'bg-amber-50', 'border-amber-200');
+                msg.textContent = 'ℹ️ Si la descarga fue bloqueada en la vista previa, pulsa "📜 Comprobante" y toma una captura de pantalla.';
+            }
+        }
+
+        // --- INICIALIZACIÓN AL CARGAR ---
+        window.onload = function() {
+            setM1Numerator(4);
+            selectM2Meter('2/4');
+            setM3Meter('2/4');
+        };
+    </script>
+</body>
+</html>
