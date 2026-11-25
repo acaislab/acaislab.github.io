@@ -98,7 +98,7 @@ const NEWS_POSTS: NewsPost[] = [
     ],
     media: {
       type: 'image',
-      src: '/assets/aistudio/image_7aaef7e0.png',
+      src: '/gtp.png',
       alt: 'Publicación de la Municipalidad de Huechuraba y Escuela Adelaida La Fetra destacando al profesor Isaac Araya en el Global Teacher Prize Chile',
       caption: 'Publicación original de @munihuechuraba y @adelaidalafetra en Instagram'
     },
